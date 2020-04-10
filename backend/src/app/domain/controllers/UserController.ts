@@ -10,7 +10,7 @@ class UserController {
       return res.status(422).json({ error: 'User already exists.' })
 
     const user = await UserService.register(name, email, password)
-    const data = user?.data(['password']).data
+    const data = user.data(['password']).data
 
     return res.status(201).json({ user: data })
   }
