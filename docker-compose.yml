@@ -1,0 +1,37 @@
+version: "3.3"
+
+services:
+  api:
+    build:
+      context: ./docker/node
+      dockerfile: Dockerfile
+    image: nodejs
+    container_name: ycoffe_api
+    restart: always
+    command: npm run dev
+    ports:
+      - "3333:3000"
+    volumes:
+      - ./backend:/usr/app
+      - ./backend/node_modules:/usr/app/node_modules
+    environment:
+      - MONGO_URL=mongo
+    depends_on:
+      - mongo
+    links:
+      - mongo
+
+  mongo:
+    image: bitnami/mongodb:latest
+    container_name: ycoffe_mongo
+    restart: always
+    env_file: ".env"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=no
+      - MONGODB_USERNAME=${MONGO_USER}
+      - MONGODB_PASSWORD=${MONGO_PASS}
+      - MONGODB_DATABASE=${MONGO_DB}
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data/db/mongo:/bitnami
