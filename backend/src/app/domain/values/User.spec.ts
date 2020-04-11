@@ -1,39 +1,41 @@
+import faker from 'faker'
+
 import { Name, Email, Password, Role } from '@domain/values/User'
 
 describe('Unit test to value objects User', () => {
   it('should be able create new valid name', () => {
-    const name = 'Thalyson Rodrigues'
+    const name = faker.name.findName()
     expect(new Name(name).toString()).toBe(name)
   })
 
   it('should be not able create new name very short or long', () => {
-    const name = 'Th'
+    const name = faker.name.findName().substring(0, 2)
     try {
       expect(new Name(name)).toThrow(Error)
     } catch (err) {}
   })
 
   it('shoulb be able create new email', () => {
-    const email = 'thalysonrodrigues.dev@gmail.com'
+    const email = faker.internet.email().toLocaleLowerCase()
     expect(new Email(email).toString()).toBe(email)
   })
 
-  it('should be not able create new email invalid', () =>{
-    const email = 'thalysonrodrigues.dev@gmailcom'
+  it('should be not able create new email invalid format', () =>{
+    const email = faker.internet.email().replace('@', '')
     try {
       expect(new Email(email)).toThrow(Error)
     } catch(err) {}
   })
 
   it('shoulb be able create new password', () => {
-    const input = '123456'
+    const input = faker.internet.password(6)
     const passw = new Password(input).hash()
 
     expect(passw.compare(input)).toBe(true)
   })
 
   it('shoulb be not able create password very short', () => {
-    const password = '1234'
+    const password = faker.internet.password(3)
     try {
       expect(new Password(password)).toThrow(Error)
     } catch (err) {}

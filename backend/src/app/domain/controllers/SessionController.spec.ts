@@ -1,3 +1,4 @@
+import faker from 'faker'
 import request from 'supertest'
 
 import '@config/index'
@@ -23,7 +24,7 @@ describe('Session', () => {
   })
 
   it('should be able create new session', async () => {
-    const pass = '123456'
+    const pass = faker.internet.password(6)
     const user = await factory.create<UserModel>('User', {
       password: Password.toPassword(pass).hash().toString()
     })
@@ -58,8 +59,8 @@ describe('Session', () => {
     const response = await request(app)
       .post('/v1/session')
       .send({
-        email: 'thalyson@email.com',
-        password: '123456'
+        email: faker.internet.email(),
+        password: faker.internet.password(6)
       })
 
     expect(response.status).toBe(401)
@@ -68,7 +69,9 @@ describe('Session', () => {
 
   it('should be able access private route', async () => {    
     const { id } = await factory.create<UserModel>('User', {
-      password: Password.toPassword('123456').hash().toString()
+      password: Password.toPassword(
+        faker.internet.password(6)
+      ).hash().toString()
     })
 
     const token = generateTokenJwt(process.env.SECRET, { id })

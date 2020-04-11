@@ -1,12 +1,14 @@
+import faker from 'faker'
+
 import { Name, Email, Password, Role } from '@domain/values/User'
 import { UserEntity } from '@domain/entity/UserEntity'
 
 describe('User Entity', () => {
   it('should be able create new instance user entity complete', () => {
     const user = new UserEntity(
-      new Name('Thalyson Rodrigues'),
-      new Email('thalysonrodrigues.dev@gmail.com'),
-      new Password('123456'),
+      new Name(faker.name.findName()),
+      new Email(faker.internet.email()),
+      new Password(faker.internet.password(6)),
       new Role('user'),
     )
 
@@ -18,9 +20,9 @@ describe('User Entity', () => {
 
   it('should be able create new instance user entity less role', () => {
     const user = new UserEntity(
-      new Name('Thalyson Rodrigues'),
-      new Email('thalysonrodrigues.dev@gmail.com'),
-      new Password('123456'),
+      new Name(faker.name.findName()),
+      new Email(faker.internet.email()),
+      new Password(faker.internet.password(6)),
     )
 
     expect(user.name).toBeInstanceOf(Name)
@@ -30,9 +32,9 @@ describe('User Entity', () => {
 
   it('should be able create new instance user and get data', () => {
     const user = new UserEntity(
-      new Name('Thalyson Rodrigues'),
-      new Email('thalysonrodrigues.dev@gmail.com'),
-      new Password('123456'),
+      new Name(faker.name.findName()),
+      new Email(faker.internet.email()),
+      new Password(faker.internet.password(6)),
       new Role('user'),
     ).data([])
 
@@ -46,9 +48,9 @@ describe('User Entity', () => {
 
   it('should be able create new instance user less role and get data', () => {
     const user = new UserEntity(
-      new Name('Thalyson Rodrigues'),
-      new Email('thalysonrodrigues.dev@gmail.com'),
-      new Password('123456'),
+      new Name(faker.name.findName()),
+      new Email(faker.internet.email()),
+      new Password(faker.internet.password(6)),
     ).data([])
 
     expect(user).toStrictEqual(
