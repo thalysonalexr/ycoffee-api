@@ -1,3 +1,5 @@
+import faker from 'faker'
+
 import User from '@domain/schemas/User'
 import MongoMock from '@utils/test/MongoMock'
 
@@ -18,9 +20,9 @@ describe('Service User', () => {
 
   it('should be able register new user', async () => {
     const user = await UserService.register(
-      'Thalyson Rodrigues',
-      'thalysonrodrigues.dev1@gmail.com',
-      '123456'
+      faker.name.findName(),
+      faker.internet.email(),
+      faker.internet.password(6)
     )
 
     expect(user).toStrictEqual(expect.any(Object))
@@ -28,9 +30,9 @@ describe('Service User', () => {
 
   it('should be able register new admin', async () => {
     const user = await UserService.register(
-      'Thalyson Rodrigues',
-      'thalysonrodrigues.dev2@gmail.com',
-      '123456',
+      faker.name.findName(),
+      faker.internet.email(),
+      faker.internet.password(6),
       'admin'
     )
 
@@ -39,9 +41,9 @@ describe('Service User', () => {
 
   it('should be generate user token', async () => {
     const user = await UserService.register(
-      'Thalyson Rodrigues',
-      'thalysonrodrigues.dev33@gmail.com',
-      '123456'
+      faker.name.findName(),
+      faker.internet.email(),
+      faker.internet.password(6)
     )
 
     process.env.SECRET = 'secret@key'

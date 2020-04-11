@@ -1,10 +1,12 @@
+import faker from 'faker'
+
 import User, { UserModel } from '@domain/schemas/User'
 import factory from '@utils/test/factories'
 import MongoMock from '@utils/test/MongoMock'
 
 import { UserEntity } from '@domain/entity/UserEntity'
 import { UserRepository } from '@domain/repository/UserRepository'
-import { Name, Email, Password, Role } from '../values/User'
+import { Name, Email, Password, Role } from '@domain/values/User'
 
 const repository = new UserRepository
 
@@ -24,7 +26,9 @@ describe('User Repository', () => {
   it('should be able create new user', async () => {
     const user = await repository.createNewUser(
       UserEntity.create(
-        'Thalyson Rodrigues', 'thalysonrodrigues.dev3@gmail.com', '123456'
+        faker.name.findName(),
+        faker.internet.email(),
+        faker.internet.password(6)
       )
     )
 
@@ -44,7 +48,9 @@ describe('User Repository', () => {
   it('should be able create new admin', async () => {
     const admin = await repository.createNewAdmin(
       UserEntity.createAdmin(
-        'Thalyson Rodrigues', 'thalysonrodrigues.dev3@gmail.com', '123456'
+        faker.name.findName(),
+        faker.internet.email(),
+        faker.internet.password(6)
       )
     )
 

@@ -1,3 +1,4 @@
+import faker from 'faker'
 import request from 'supertest'
 
 import app from '../../../app'
@@ -22,9 +23,9 @@ describe('Users actions', () => {
 
   it('should be able register new user', async () => {
     const user = {
-      name: 'Thalyson Rodrigues',
-      email: 'thalysonrodrigues.dev4@gmail.com',
-      password: '123456',
+      name: faker.name.findName(),
+      email: faker.internet.email().toLowerCase(),
+      password: faker.internet.password(6),
     }
 
     const response = await request(app)
@@ -46,8 +47,8 @@ describe('Users actions', () => {
     )
   })
 
-  it('should be not able register because user exists', async () => {
-    const pass = '123456'
+  it('should be not able register because user already exists', async () => {
+    const pass = faker.internet.password(6)
     const user = await factory.create<UserModel>('User', {
       password: Password.toPassword(pass).hash().toString()
     })
@@ -62,5 +63,17 @@ describe('Users actions', () => {
 
     expect(response.status).toBe(422)
     expect(response.body).toStrictEqual({ error: 'User already exists.' })
+  })
+
+  it('should be not able register user with wrong content', async () => {
+    const response = await request(app)
+      .post('/v1/users')
+      .send({
+        name: faker.name.findName(),
+        email: faker.internet.email(),
+        password: faker.internet.password(3), // invalid
+      })
+
+    expect(response.status).toBe(400)
   })
 })
