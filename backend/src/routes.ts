@@ -3,13 +3,20 @@ import { Router } from 'express'
 import AuthMiddleware from '@app/middlewares/auth'
 import Validator from '@app/middlewares/validator'
 
-import UserController from '@app/domain/controllers/UserController'
-import SessionController from '@app/domain/controllers/SessionController'
+import UserController from '@domain/controllers/UserController'
+import SessionController from '@domain/controllers/SessionController'
 
-import { StoreUser } from '@domain/validators/UserValidator'
 import { StoreSession } from '@domain/validators/SessionValidator'
+import { StoreUser } from '@domain/validators/UserValidator'
 
 const routes = Router()
+
+routes.get('/', AuthMiddleware, (req, res) => {
+  return res.status(200).json({
+    api: process.env.API_NAME,
+    version: 'v1'
+  })
+})
 
 routes.post(
   '/users',
@@ -18,18 +25,17 @@ routes.post(
   UserController.store
 )
 
+routes.get(
+  '/users/:id',  
+  AuthMiddleware,
+  UserController.show
+)
+
 routes.post(
   '/session',
   StoreSession.instance(),
   Validator,
   SessionController.store
 )
-
-routes.get('/', AuthMiddleware, (req, res) => {
-  return res.status(200).json({
-    api: process.env.API_NAME,
-    version: 'v1'
-  })
-})
 
 export default routes

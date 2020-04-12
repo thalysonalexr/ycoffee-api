@@ -1,8 +1,21 @@
 import faker from 'faker'
+import { Types } from 'mongoose'
 
-import { Name, Email, Password, Role } from '@domain/values/User'
+import { ObjectID, Name, Email, Password, Role } from '@domain/values/User'
 
 describe('Unit test to value objects User', () => {
+  it('should be able create new valid objectID', () => {
+    const objectId = String(Types.ObjectId())
+    expect(new ObjectID(objectId).toString()).toBe(objectId)
+  })
+
+  it('should be able create invalid objectID', () => {
+    const objectId = faker.name.findName().substring(0, 2)
+    try {
+      expect(new ObjectID(objectId)).toThrow(Error)
+    } catch (err) {}
+  })
+
   it('should be able create new valid name', () => {
     const name = faker.name.findName()
     expect(new Name(name).toString()).toBe(name)

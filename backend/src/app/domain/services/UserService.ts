@@ -1,6 +1,6 @@
 import { generateTokenJwt } from '@app/utils'
 
-import { Email } from '@domain/values/User'
+import { Email, ObjectID } from '@domain/values/User'
 import { IValueObject } from '@core/values/IValueObject'
 import { IUserEntity, UserEntity } from '@domain/entity/UserEntity'
 import { IUserRepository, UserRepository } from '@app/domain/repository/UserRepository'
@@ -10,16 +10,29 @@ class UserService {
     private _repository: IUserRepository<IUserEntity, IValueObject>
   ) {}
 
-  public async register(name: string, email: string, password: string, role: string = 'user') {
+  public async register(
+    name: string,
+    email: string,
+    password: string,
+    role: 'user' | 'admin' = 'user'
+  ) {
     if (role === 'user') {
-      return await this._repository.createNewUser(UserEntity.create(name, email, password))
+      return await this._repository.createNewUser(
+        UserEntity.create(name, email, password)
+      )
     }
 
-    return await this._repository.createNewAdmin(UserEntity.createAdmin(name, email, password))
+    return await this._repository.createNewAdmin(
+      UserEntity.createAdmin(name, email, password)
+    )
   }
 
   public async getByEmail(email: string) {
     return await this._repository.getUserByEmail(new Email(email))
+  }
+
+  public async getById(id: string) {
+    return await this._repository.getUserById(new ObjectID(id))
   }
 
   public generateUserToken(id: object | undefined) {

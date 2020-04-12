@@ -6,7 +6,7 @@ import MongoMock from '@utils/test/MongoMock'
 
 import { UserEntity } from '@domain/entity/UserEntity'
 import { UserRepository } from '@domain/repository/UserRepository'
-import { Name, Email, Password, Role } from '@domain/values/User'
+import { ObjectID, Name, Email, Password, Role } from '@domain/values/User'
 
 const repository = new UserRepository
 
@@ -79,6 +79,28 @@ describe('User Repository', () => {
     expect(user).toStrictEqual(
       expect.objectContaining({
         id: expect.any(Object),
+        name: expect.any(Name),
+        email: expect.any(Email),
+        password: expect.any(Password),
+        role: expect.any(Role),
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date),
+      })
+    )
+  })
+
+  it('should be able get user by id', async () => {
+    const { _id } = await factory.create<UserModel>('User', {
+      password: Password.toPassword('12345').hash().toString()
+    })
+
+    const user = await repository.getUserById(
+      new ObjectID(_id)
+    )
+
+    expect(user).toStrictEqual(
+      expect.objectContaining({
+        id: expect.any(ObjectID),
         name: expect.any(Name),
         email: expect.any(Email),
         password: expect.any(Password),

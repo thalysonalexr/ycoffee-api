@@ -106,7 +106,7 @@ describe('Session', () => {
     expect(response.status).toBe(401)
   })
 
-  it('should be bot able acess private route with invalid token', async () => {
+  it('should be not able access private route with invalid token', async () => {
     const response = await request(app)
       .get('/v1')
       .set('Authorization', 'Bearer 312312idn12idi12ndinid12id12i')

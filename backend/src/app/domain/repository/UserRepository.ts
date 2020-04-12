@@ -1,6 +1,6 @@
 import User, { UserModel } from '@domain/schemas/User'
 
-import { Email } from '@domain/values/User'
+import { Email, ObjectID } from '@domain/values/User'
 import { IValueObject } from '@core/values/IValueObject'
 import { IUserEntity, UserEntity } from '@domain/entity/UserEntity'
 
@@ -8,6 +8,7 @@ export interface IUserRepository<T, K> {
   createNewUser(data: T): Promise<T>
   createNewAdmin(data: T): Promise<T>
   getUserByEmail(email: K): Promise<T | null>
+  getUserById(id: K): Promise<T | null>
 }
 
 export class UserRepository implements IUserRepository<IUserEntity, IValueObject> {
@@ -35,6 +36,15 @@ export class UserRepository implements IUserRepository<IUserEntity, IValueObject
 
   public async getUserByEmail(email: Email): Promise<IUserEntity | null> {
     const user = await User.findOne({ email: email.toString() }).select('+password')
+
+    if (user)
+      return this.fromNativeData(user)
+
+    return null
+  }
+
+  public async getUserById(id: ObjectID): Promise<IUserEntity | null> {
+    const user = await User.findById(id.toString()).select('+password')
 
     if (user)
       return this.fromNativeData(user)

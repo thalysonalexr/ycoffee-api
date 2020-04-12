@@ -3,10 +3,12 @@ import request from 'supertest'
 
 import app from '../../../app'
 
-import User, { UserModel } from '@domain/schemas/User'
-import MongoMock from '@utils/test/MongoMock'
 import factory from '@utils/test/factories'
-import { Password } from '../values/User'
+import MongoMock from '@utils/test/MongoMock'
+import { generateTokenJwt } from '@app/utils'
+
+import { Password } from '@domain/values/User'
+import User, { UserModel } from '@domain/schemas/User'
 
 describe('Users actions', () => {
   beforeAll(async () => {
@@ -75,5 +77,37 @@ describe('Users actions', () => {
       })
 
     expect(response.status).toBe(400)
+  })
+
+  it('should be able show user details', async () => {
+    const pass = faker.internet.password(6)
+    const { id } = await factory.create<UserModel>('User', {
+      password: Password.toPassword(pass).hash().toString()
+    })
+
+    const token = generateTokenJwt(process.env.SECRET, { id })
+
+    const response = await request(app)
+      .get(`/v1/users/${id}`)
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(response.status).toBe(200)
+  })
+
+  it('should be not able show user details because user not exists', async () => {
+    const pass = faker.internet.password(6)
+    const { id } = await factory.create<UserModel>('User', {
+      password: Password.toPassword(pass).hash().toString()
+    })
+    
+    await User.deleteMany({})
+
+    const token = generateTokenJwt(process.env.SECRET, { id })
+
+    const response = await request(app)
+      .get(`/v1/users/${id}`)
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(response.status).toBe(404)
   })
 })
