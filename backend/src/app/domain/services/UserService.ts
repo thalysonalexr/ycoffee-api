@@ -16,23 +16,22 @@ class UserService {
     password: string,
     role: 'user' | 'admin' = 'user'
   ) {
-    if (role === 'user') {
-      return await this._repository.createNewUser(
+    if (role === 'user')
+      return await this._repository.storeUser(
         UserEntity.create(name, email, password)
       )
-    }
-
-    return await this._repository.createNewAdmin(
-      UserEntity.createAdmin(name, email, password)
-    )
+    else
+      return await this._repository.storeUser(
+        UserEntity.createAdmin(name, email, password)
+      )
   }
 
   public async getByEmail(email: string) {
-    return await this._repository.getUserByEmail(new Email(email))
+    return await this._repository.findByEmail(new Email(email))
   }
 
   public async getById(id: string) {
-    return await this._repository.getUserById(new ObjectID(id))
+    return await this._repository.findById(new ObjectID(id))
   }
 
   public generateUserToken(id: object | undefined) {

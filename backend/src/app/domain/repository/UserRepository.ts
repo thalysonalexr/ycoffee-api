@@ -5,14 +5,13 @@ import { IValueObject } from '@core/values/IValueObject'
 import { IUserEntity, UserEntity } from '@domain/entity/UserEntity'
 
 export interface IUserRepository<T, K> {
-  createNewUser(data: T): Promise<T>
-  createNewAdmin(data: T): Promise<T>
-  getUserByEmail(email: K): Promise<T | null>
-  getUserById(id: K): Promise<T | null>
+  storeUser(data: T): Promise<T>
+  findByEmail(email: K): Promise<T | null>
+  findById(id: K): Promise<T | null>
 }
 
 export class UserRepository implements IUserRepository<IUserEntity, IValueObject> {
-  public async createNewUser(user: IUserEntity) {
+  public async storeUser(user: IUserEntity) {
     const data = await User.create({
       name: user.name.toString(),
       email: user.email.toString(),
@@ -23,18 +22,7 @@ export class UserRepository implements IUserRepository<IUserEntity, IValueObject
     return this.fromNativeData(data)
   }
 
-  public async createNewAdmin(user: IUserEntity) {
-    const data = await User.create({
-      name: user.name.toString(),
-      email: user.email.toString(),
-      password: user.password.toString(),
-      role: (user.role as IValueObject).toString(),
-    })
-
-    return this.fromNativeData(data)
-  }
-
-  public async getUserByEmail(email: Email): Promise<IUserEntity | null> {
+  public async findByEmail(email: Email): Promise<IUserEntity | null> {
     const user = await User.findOne({ email: email.toString() }).select('+password')
 
     if (user)
@@ -43,7 +31,7 @@ export class UserRepository implements IUserRepository<IUserEntity, IValueObject
     return null
   }
 
-  public async getUserById(id: ObjectID): Promise<IUserEntity | null> {
+  public async findById(id: ObjectID): Promise<IUserEntity | null> {
     const user = await User.findById(id.toString()).select('+password')
 
     if (user)

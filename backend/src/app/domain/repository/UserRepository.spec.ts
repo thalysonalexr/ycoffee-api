@@ -24,7 +24,7 @@ describe('User Repository', () => {
   })
 
   it('should be able create new user', async () => {
-    const user = await repository.createNewUser(
+    const user = await repository.storeUser(
       UserEntity.create(
         faker.name.findName(),
         faker.internet.email(),
@@ -46,7 +46,7 @@ describe('User Repository', () => {
   })
 
   it('should be able create new admin', async () => {
-    const admin = await repository.createNewAdmin(
+    const admin = await repository.storeUser(
       UserEntity.createAdmin(
         faker.name.findName(),
         faker.internet.email(),
@@ -72,7 +72,7 @@ describe('User Repository', () => {
       password: Password.toPassword('12345').hash().toString()
     })
 
-    const user = await repository.getUserByEmail(
+    const user = await repository.findByEmail(
       new Email(email)
     )
 
@@ -90,13 +90,11 @@ describe('User Repository', () => {
   })
 
   it('should be able get user by id', async () => {
-    const { _id } = await factory.create<UserModel>('User', {
+    const { id } = await factory.create<UserModel>('User', {
       password: Password.toPassword('12345').hash().toString()
     })
 
-    const user = await repository.getUserById(
-      new ObjectID(_id)
-    )
+    const user = await repository.findById(new ObjectID(id))
 
     expect(user).toStrictEqual(
       expect.objectContaining({
