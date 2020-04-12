@@ -1,11 +1,11 @@
-import { Name, Email, Password, Role, RoleType } from '@domain/values/User'
+import { ObjectID, Name, Email, Password, Role, RoleType } from '@domain/values/User'
 
 export interface IUser {
   name: Name,
   email: Email,
   password: Password,
   role?: Role,
-  id?: object,
+  id?: ObjectID,
   createdAt?: Date,
   updatedAt?: Date,
 }
@@ -20,7 +20,7 @@ export class UserEntity implements IUserEntity {
     public email: Email,
     public password: Password,
     public role?: Role,
-    public id?: object,
+    public id?: ObjectID,
     public createdAt?: Date,
     public updatedAt?: Date,
   ) {}
@@ -47,7 +47,7 @@ export class UserEntity implements IUserEntity {
     name: string,
     email: string,
     password: string,
-    id?: object,
+    id?: string,
     role?: string,
     createdAt?: Date,
     updatedAt?: Date,
@@ -57,7 +57,7 @@ export class UserEntity implements IUserEntity {
       Email.toEmail(email),
       Password.toPassword(password),
       Role.toRole((role as RoleType)),
-      id,
+      ObjectID.toObjectID((id as string)),
       createdAt,
       updatedAt,
     )
@@ -65,7 +65,7 @@ export class UserEntity implements IUserEntity {
 
   public data(exclude: string[]) {
     const data = {
-      id: this.id,
+      id: this.id?.toString(),
       name: this.name.toString(),
       email: this.email.toString(),
       password: this.password.toString(),
