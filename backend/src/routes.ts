@@ -31,6 +31,18 @@ routes.get(
   UserController.show
 )
 
+routes.put(
+  '/users/:id',
+  AuthMiddleware,
+  UserController.update
+)
+
+routes.delete(
+  '/users/:id',
+  AuthMiddleware,
+  UserController.remove
+)
+
 routes.post(
   '/session',
   StoreSession.instance(),

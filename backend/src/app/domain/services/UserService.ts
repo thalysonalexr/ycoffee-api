@@ -3,7 +3,7 @@ import { generateTokenJwt } from '@app/utils'
 import { Email, ObjectID } from '@domain/values/User'
 import { IValueObject } from '@core/values/IValueObject'
 import { IUserEntity, UserEntity } from '@domain/entity/UserEntity'
-import { IUserRepository, UserRepository } from '@app/domain/repository/UserRepository'
+import UserRepository, { IUserRepository } from '@app/domain/repository/UserRepository'
 
 class UserService {
   public constructor(
@@ -27,11 +27,22 @@ class UserService {
   }
 
   public async getByEmail(email: string) {
-    return await this._repository.findByEmail(new Email(email))
+    return await this._repository.findByEmail(Email.toEmail(email))
   }
 
   public async getById(id: string) {
-    return await this._repository.findById(new ObjectID(id))
+    return await this._repository.findById(ObjectID.toObjectID(id))
+  }
+
+  public async update(id: string, name: string, email: string, password: string) {
+    return await this._repository.updateUser(
+      ObjectID.toObjectID(id),
+      UserEntity.create(name, email, password)
+    )
+  }
+
+  public async remove(id: string) {
+    return await this._repository.deleteUser(ObjectID.toObjectID(id))
   }
 
   public generateUserToken(id: object | undefined) {
@@ -39,4 +50,4 @@ class UserService {
   }
 }
 
-export default new UserService(new UserRepository())
+export default new UserService(UserRepository)

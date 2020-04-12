@@ -8,7 +8,7 @@ import { UserEntity } from '@domain/entity/UserEntity'
 import { UserRepository } from '@domain/repository/UserRepository'
 import { ObjectID, Name, Email, Password, Role } from '@domain/values/User'
 
-const repository = new UserRepository
+const repository = new UserRepository(User)
 
 describe('User Repository', () => {
   beforeAll(async () => {
@@ -69,7 +69,9 @@ describe('User Repository', () => {
 
   it('should be able get user by email', async () => {
     const { email } = await factory.create<UserModel>('User', {
-      password: Password.toPassword('12345').hash().toString()
+      password: Password.toPassword(
+        faker.internet.password(6)
+      ).hash().toString()
     })
 
     const user = await repository.findByEmail(
@@ -91,7 +93,9 @@ describe('User Repository', () => {
 
   it('should be able get user by id', async () => {
     const { id } = await factory.create<UserModel>('User', {
-      password: Password.toPassword('12345').hash().toString()
+      password: Password.toPassword(
+        faker.internet.password(6)
+      ).hash().toString()
     })
 
     const user = await repository.findById(new ObjectID(id))
@@ -107,5 +111,46 @@ describe('User Repository', () => {
         updatedAt: expect.any(Date),
       })
     )
+  })
+
+  it('should be able update user by id', async () => {
+    const { id } = await factory.create<UserModel>('User', {
+      password: Password.toPassword(
+        faker.internet.password(6)
+      ).hash().toString()
+    })
+
+    const user = await repository.updateUser(
+      new ObjectID(id),
+      UserEntity.create(
+        faker.name.findName(),
+        faker.internet.email(),
+        faker.internet.password(6)
+      )
+    )
+
+    expect(user).toStrictEqual(
+      expect.objectContaining({
+        id: expect.any(ObjectID),
+        name: expect.any(Name),
+        email: expect.any(Email),
+        password: expect.any(Password),
+        role: expect.any(Role),
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date),
+      })
+    )
+  })
+
+  it('should be able remove user by id', async () => {
+    const { id } = await factory.create<UserModel>('User', {
+      password: Password.toPassword(
+        faker.internet.password(6)
+      ).hash().toString()
+    })
+
+    const result = await repository.deleteUser(new ObjectID(id))
+
+    expect(result).toBe(true)
   })
 })

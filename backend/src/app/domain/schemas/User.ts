@@ -24,8 +24,7 @@ const UserSchema = new Schema({
     type: String,
     required: true,
     minlength: 5,
-    maxlength: 255,
-    select: false
+    maxlength: 255
   },
   role: {
     type: String,

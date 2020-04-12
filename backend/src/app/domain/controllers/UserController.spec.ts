@@ -110,4 +110,78 @@ describe('Users actions', () => {
 
     expect(response.status).toBe(404)
   })
+
+  it('should be not able update user because user not exists', async () => {
+    const pass = faker.internet.password(6)
+    const { id } = await factory.create<UserModel>('User', {
+      password: Password.toPassword(pass).hash().toString()
+    })
+    
+    await User.deleteMany({})
+
+    const token = generateTokenJwt(process.env.SECRET, { id })
+
+    const response = await request(app)
+      .put(`/v1/users/${id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        name: faker.name.findName(),
+        email: faker.internet.email(),
+        password: faker.internet.password(6)
+      })
+
+    expect(response.status).toBe(404)
+  })
+
+  it('should be able update user', async () => {
+    const pass = faker.internet.password(6)
+    const { id } = await factory.create<UserModel>('User', {
+      password: Password.toPassword(pass).hash().toString()
+    })
+
+    const token = generateTokenJwt(process.env.SECRET, { id })
+
+    const response = await request(app)
+      .put(`/v1/users/${id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        name: faker.name.findName(),
+        email: faker.internet.email(),
+        password: faker.internet.password(6)
+      })
+
+    expect(response.status).toBe(200)
+  })
+
+  it('should be not able remove user because user not exists', async () => {
+    const pass = faker.internet.password(6)
+    const { id } = await factory.create<UserModel>('User', {
+      password: Password.toPassword(pass).hash().toString()
+    })
+
+    await User.deleteMany({})
+
+    const token = generateTokenJwt(process.env.SECRET, { id })
+
+    const response = await request(app)
+      .delete(`/v1/users/${id}`)
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(response.status).toBe(404)
+  })
+
+  it('should be able remove user', async () => {
+    const pass = faker.internet.password(6)
+    const { id } = await factory.create<UserModel>('User', {
+      password: Password.toPassword(pass).hash().toString()
+    })
+
+    const token = generateTokenJwt(process.env.SECRET, { id })
+
+    const response = await request(app)
+      .delete(`/v1/users/${id}`)
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(response.status).toBe(204)
+  })
 })
