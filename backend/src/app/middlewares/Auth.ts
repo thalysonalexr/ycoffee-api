@@ -24,7 +24,8 @@ export class Auth implements IMiddleware {
       if (err)
         return res.status(401).json({ error: 'Token invalid.' })
 
-      req.sessionId = (decoded as { id: number }).id
+      req.session = <Express.TokenDecoded>decoded
+
       return next()
     })
   }
