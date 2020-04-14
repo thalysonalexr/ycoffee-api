@@ -122,7 +122,7 @@ describe('Users actions', () => {
     const token = generateTokenJwt(process.env.SECRET, { id })
 
     const response = await request(app)
-      .put(`/v1/users/${id}`)
+      .put(`/v1/users`)
       .set('Authorization', `Bearer ${token}`)
       .send({
         name: faker.name.findName(),
@@ -142,7 +142,7 @@ describe('Users actions', () => {
     const token = generateTokenJwt(process.env.SECRET, { id })
 
     const response = await request(app)
-      .put(`/v1/users/${id}`)
+      .put(`/v1/users`)
       .set('Authorization', `Bearer ${token}`)
       .send({
         name: faker.name.findName(),
@@ -153,7 +153,7 @@ describe('Users actions', () => {
     expect(response.status).toBe(200)
   })
 
-  it('should be not able remove user because user not exists', async () => {
+  it('should be not able destroy user because user not exists', async () => {
     const pass = faker.internet.password(6)
     const { id } = await factory.create<UserModel>('User', {
       password: Password.toPassword(pass).hash().toString()
@@ -164,13 +164,13 @@ describe('Users actions', () => {
     const token = generateTokenJwt(process.env.SECRET, { id })
 
     const response = await request(app)
-      .delete(`/v1/users/${id}`)
+      .delete(`/v1/users`)
       .set('Authorization', `Bearer ${token}`)
 
     expect(response.status).toBe(404)
   })
 
-  it('should be able remove user', async () => {
+  it('should be able destroy user', async () => {
     const pass = faker.internet.password(6)
     const { id } = await factory.create<UserModel>('User', {
       password: Password.toPassword(pass).hash().toString()
@@ -179,7 +179,7 @@ describe('Users actions', () => {
     const token = generateTokenJwt(process.env.SECRET, { id })
 
     const response = await request(app)
-      .delete(`/v1/users/${id}`)
+      .delete(`/v1/users`)
       .set('Authorization', `Bearer ${token}`)
 
     expect(response.status).toBe(204)

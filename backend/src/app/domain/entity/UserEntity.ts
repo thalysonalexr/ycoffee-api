@@ -12,6 +12,7 @@ export interface IUser {
 
 export interface IUserEntity extends IUser {
   data(exclude: string[]): any
+  toRole(role: RoleType): IUserEntity
 }
 
 export class UserEntity implements IUserEntity {
@@ -61,6 +62,11 @@ export class UserEntity implements IUserEntity {
       createdAt,
       updatedAt,
     )
+  }
+
+  public toRole(role: RoleType): IUserEntity {
+    this.role = Role.toRole(role)
+    return this
   }
 
   public data(exclude: string[]) {

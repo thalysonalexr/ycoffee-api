@@ -14,7 +14,11 @@ class SessionController {
     if (!user.password.compare(password))
       return res.status(401).json({ error: 'Wrong password.' })
 
-    const token = UserService.generateUserToken(user.id)
+    const token = UserService.generateUserToken({
+      id: (user.id as object).toString(),
+      role: (user.role as object).toString()
+    })
+
     const udata = user.data(['password']).data
 
     return res.status(200).json({ user: udata, token })

@@ -60,4 +60,17 @@ describe('User Entity', () => {
       })
     )
   })
+
+  it('should be able update user role', () => {
+    const user = new UserEntity(
+      new Name(faker.name.findName()),
+      new Email(faker.internet.email()),
+      new Password(faker.internet.password(6)),
+    )
+
+    user.toRole('disabled')
+
+    expect(user.role).toBeInstanceOf(Role)
+    expect(user.role?.toString()).toBe('disabled')
+  })
 })
