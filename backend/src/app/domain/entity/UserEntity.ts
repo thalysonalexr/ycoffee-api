@@ -1,13 +1,13 @@
 import { ObjectID, Name, Email, Password, Role, RoleType } from '@domain/values/User'
 
 export interface IUser {
-  name: Name,
-  email: Email,
-  password: Password,
-  role?: Role,
-  id?: ObjectID,
-  createdAt?: Date,
-  updatedAt?: Date,
+  name: Name
+  email: Email
+  password: Password
+  role?: Role
+  id?: ObjectID
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export interface IUserEntity extends IUser {
