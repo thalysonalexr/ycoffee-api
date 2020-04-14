@@ -1,5 +1,14 @@
 declare namespace Express {
+  type Role = 'user' | 'admin'
+
+  type TokenDecoded = {
+    id: string,
+    role: Role
+    iat: string,
+    exp: string,
+  }
+
   interface Request {
-    sessionId: number
+    session: TokenDecoded
   }
 }
