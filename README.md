@@ -23,6 +23,10 @@ Produto mínimo viável para cadastro e gerenciamento de receitas de cafés.
     * senha
     * papel (usuário, administrador, desabilitado)
 
+  - [x] Dashboard admin
+    - Habilitar/desabilitar usuário
+    - Remover usuários
+
 ## Não funcionalidades - RNF
 
   - [x] Persistir dados em banco não relacional (MongoDB)
