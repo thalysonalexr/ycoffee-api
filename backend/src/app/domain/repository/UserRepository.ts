@@ -57,6 +57,7 @@ export class UserRepository implements IUserRepository<IUserEntity, IValueObject
         name: u.name.toString(),
         email: u.email.toString(),
         password: u.password.toString(),
+        role: (u.role as object).toString()
       },
       { new: true }
     )

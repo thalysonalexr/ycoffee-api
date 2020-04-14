@@ -1,13 +1,15 @@
 import { Router } from 'express'
 
-import AuthMiddleware from '@app/middlewares/auth'
-import Validator from '@app/middlewares/validator'
+import Validator from '@app/middlewares/Validator'
+import AuthMiddleware from '@app/middlewares/Auth'
+import AuthorizationMiddleware from '@app/middlewares/Authorization'
 
 import UserController from '@domain/controllers/UserController'
+import AdminController from '@domain/controllers/AdminController'
 import SessionController from '@domain/controllers/SessionController'
 
 import { StoreSession } from '@domain/validators/SessionValidator'
-import { StoreUser } from '@domain/validators/UserValidator'
+import { StoreUser, UpdateUser } from '@domain/validators/UserValidator'
 
 const routes = Router()
 
@@ -18,6 +20,15 @@ routes.get('/', AuthMiddleware, (req, res) => {
   })
 })
 
+// authentication
+routes.post(
+  '/session',
+  StoreSession.instance(),
+  Validator,
+  SessionController.store
+)
+  
+// users routes
 routes.post(
   '/users',
   StoreUser.instance(),
@@ -32,22 +43,39 @@ routes.get(
 )
 
 routes.put(
-  '/users/:id',
+  '/users',
+  UpdateUser.instance(),
+  Validator,
   AuthMiddleware,
   UserController.update
 )
 
 routes.delete(
-  '/users/:id',
+  '/users',
   AuthMiddleware,
   UserController.remove
 )
 
+// dashboard admin
 routes.post(
-  '/session',
-  StoreSession.instance(),
-  Validator,
-  SessionController.store
+  '/users/:id/disable',
+  AuthMiddleware,
+  AuthorizationMiddleware,
+  AdminController.disable
+)
+
+routes.post(
+  '/users/:id/enable',
+  AuthMiddleware,
+  AuthorizationMiddleware,
+  AdminController.enable
+)
+
+routes.delete(
+  '/users/:id',
+  AuthMiddleware,
+  AuthorizationMiddleware,
+  AdminController.remove
 )
 
 export default routes

@@ -40,7 +40,7 @@ describe('Service User', () => {
   })
 
   it('should be generate user token', async () => {
-    const user = await UserService.register(
+    const { id } = await UserService.register(
       faker.name.findName(),
       faker.internet.email(),
       faker.internet.password(6)
@@ -48,7 +48,7 @@ describe('Service User', () => {
 
     process.env.SECRET = 'secret@key'
 
-    const token = UserService.generateUserToken(user.id)
+    const token = UserService.generateUserToken({ id })
     expect(token).toStrictEqual(expect.any(String))
     expect(token.split('.').length).toBe(3)
   })
@@ -78,6 +78,18 @@ describe('Service User', () => {
     )
 
     const result = await UserService.remove(<string>id?.toString())
+
+    expect(result).toBe(true)
+  })
+
+  it('should be able update role', async () => {
+    const { id } = await UserService.register(
+      faker.name.findName(),
+      faker.internet.email(),
+      faker.internet.password(6)
+    )
+
+    const result = await UserService.updateRole(<string>id?.toString(), 'disabled')
 
     expect(result).toStrictEqual(true)
   })

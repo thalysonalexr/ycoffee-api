@@ -1,6 +1,6 @@
 import { generateTokenJwt } from '@app/utils'
 
-import { Email, ObjectID } from '@domain/values/User'
+import { Email, ObjectID, RoleType } from '@domain/values/User'
 import { IValueObject } from '@core/values/IValueObject'
 import { IUserEntity, UserEntity } from '@domain/entity/UserEntity'
 import UserRepository, { IUserRepository } from '@app/domain/repository/UserRepository'
@@ -14,7 +14,7 @@ class UserService {
     name: string,
     email: string,
     password: string,
-    role: 'user' | 'admin' = 'user'
+    role: RoleType = 'user'
   ) {
     if (role === 'user')
       return await this._repository.storeUser(
@@ -45,8 +45,22 @@ class UserService {
     return await this._repository.deleteUser(ObjectID.toObjectID(id))
   }
 
-  public generateUserToken(id: object | undefined) {
-    return generateTokenJwt(process.env.SECRET, { id })
+  public async updateRole(id: string, role: RoleType) {
+    const user = await this._repository.findById(ObjectID.toObjectID(id))
+
+    if (user) {
+      await this._repository.updateUser(
+        ObjectID.toObjectID(id),
+        user.toRole(role)
+      )
+      return Promise.resolve(true)
+    }
+
+    return Promise.resolve(false)
+  }
+
+  public generateUserToken(payload: object) {
+    return generateTokenJwt(process.env.SECRET, payload)
   }
 }
 

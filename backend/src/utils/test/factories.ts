@@ -9,4 +9,11 @@ factory.define('User', User, {
   password: faker.internet.password(),
 })
 
+factory.define('Admin', User, {
+  name: faker.name.findName(),
+  email: faker.internet.email(),
+  password: faker.internet.password(),
+  role: 'admin'
+})
+
 export default factory

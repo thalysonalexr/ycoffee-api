@@ -10,9 +10,15 @@ class UserController {
       return res.status(422).json({ error: 'User already exists.' })
 
     const user = await UserService.register(name, email, password)
-    const data = user.data(['password']).data
 
-    return res.status(201).json({ user: data })
+    const token = UserService.generateUserToken({
+      id: (user.id as object).toString(),
+      role: (user.role as object).toString()
+    })
+
+    const udata = user.data(['password']).data
+
+    return res.status(201).json({ user: udata, token })
   }
 
   public async show(req: Request, res: Response) {
@@ -29,7 +35,7 @@ class UserController {
   }
 
   public async update(req: Request, res: Response) {
-    const { id } = req.params
+    const { id } = req.session
     const { name, email, password } = req.body
 
     const user = await UserService.update(id, name, email, password)
@@ -43,7 +49,7 @@ class UserController {
   }
 
   public async remove(req: Request, res: Response) {
-    const { id } = req.params
+    const { id } = req.session
 
     if (await UserService.remove(id))
       return res.status(204).end()
