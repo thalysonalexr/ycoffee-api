@@ -6,7 +6,8 @@ import MongoMock from '@utils/test/MongoMock'
 
 import { UserEntity } from '@domain/entity/UserEntity'
 import { UserRepository } from '@domain/repository/UserRepository'
-import { ObjectID, Name, Email, Password, Role } from '@domain/values/User'
+import { ObjectID } from '@domain/values/Mongo'
+import { Name, Email, Password, Role } from '@domain/values/User'
 
 const repository = new UserRepository(User)
 

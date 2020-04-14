@@ -1,4 +1,5 @@
-import { ObjectID, Name, Email, Password, Role, RoleType } from '@domain/values/User'
+import { ObjectID } from '@domain/values/Mongo'
+import { Name, Email, Password, Role, RoleType } from '@domain/values/User'
 
 export interface IUser {
   name: Name

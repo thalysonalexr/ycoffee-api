@@ -2,7 +2,8 @@ import { Model } from 'mongoose'
 
 import User, { UserModel } from '@domain/schemas/User'
 
-import { Email, ObjectID } from '@domain/values/User'
+import { Email } from '@domain/values/User'
+import { ObjectID } from '@domain/values/Mongo'
 import { IValueObject } from '@core/values/IValueObject'
 import { IUserEntity, UserEntity } from '@domain/entity/UserEntity'
 

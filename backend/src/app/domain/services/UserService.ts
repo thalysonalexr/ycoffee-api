@@ -1,6 +1,7 @@
 import { generateTokenJwt } from '@app/utils'
 
-import { Email, ObjectID, RoleType } from '@domain/values/User'
+import { ObjectID } from '@domain/values/Mongo'
+import { Email, RoleType } from '@domain/values/User'
 import { IValueObject } from '@core/values/IValueObject'
 import { IUserEntity, UserEntity } from '@domain/entity/UserEntity'
 import UserRepository, { IUserRepository } from '@app/domain/repository/UserRepository'
