@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from 'express'
 import { IMiddleware } from '@core/middlewares/IMiddleware'
 
 export class Auth implements IMiddleware {
-  public process(req: Request, res: Response, next: NextFunction): Response<any> | void {
+  public process(req: Request, res: Response, next: NextFunction) {
     const header = req.headers.authorization
     
     if (!header)
