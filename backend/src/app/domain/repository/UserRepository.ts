@@ -1,11 +1,11 @@
 import { Model } from 'mongoose'
 
-import User, { UserModel } from '@domain/schemas/User'
+import { IValueObject } from '@core/values/IValueObject'
 
+import User, { UserModel } from '@domain/schemas/User'
+import { IUserEntity, UserEntity } from '@domain/entity/UserEntity'
 import { Email } from '@domain/values/User'
 import { ObjectID } from '@domain/values/Mongo'
-import { IValueObject } from '@core/values/IValueObject'
-import { IUserEntity, UserEntity } from '@domain/entity/UserEntity'
 
 export interface IUserRepository<T, K> {
   storeUser(user: T): Promise<T>
@@ -18,7 +18,7 @@ export interface IUserRepository<T, K> {
 export class UserRepository implements IUserRepository<IUserEntity, IValueObject> {
   public constructor(private _instance: Model<UserModel>) {}
 
-  public async storeUser(user: IUserEntity) {
+  public async storeUser(user: IUserEntity): Promise<IUserEntity> {
     const data = await this._instance.create({
       name: user.name.toString(),
       email: user.email.toString(),
@@ -53,13 +53,7 @@ export class UserRepository implements IUserRepository<IUserEntity, IValueObject
 
   public async updateUser(id: ObjectID, u: IUserEntity): Promise<IUserEntity | null> {
     const user = await this._instance.findByIdAndUpdate(
-      id.toString(),
-      {
-        name: u.name.toString(),
-        email: u.email.toString(),
-        password: u.password.toString(),
-        role: (u.role as object).toString()
-      },
+      id.toString(), u.data('id', 'role', 'updatedAt', 'createdAt'),
       { new: true }
     )
 

@@ -1,11 +1,12 @@
 import faker from 'faker'
 
-import User, { UserModel } from '@domain/schemas/User'
 import factory from '@utils/test/factories'
 import MongoMock from '@utils/test/MongoMock'
 
 import { UserEntity } from '@domain/entity/UserEntity'
 import { UserRepository } from '@domain/repository/UserRepository'
+import User, { UserModel } from '@domain/schemas/User'
+
 import { ObjectID } from '@domain/values/Mongo'
 import { Name, Email, Password, Role } from '@domain/values/User'
 
@@ -35,7 +36,7 @@ describe('User Repository', () => {
 
     expect(user).toStrictEqual(
       expect.objectContaining({
-        id: expect.any(Object),
+        id: expect.any(ObjectID),
         name: expect.any(Name),
         email: expect.any(Email),
         password: expect.any(Password),
@@ -57,7 +58,7 @@ describe('User Repository', () => {
 
     expect(admin).toStrictEqual(
       expect.objectContaining({
-        id: expect.any(Object),
+        id: expect.any(ObjectID),
         name: expect.any(Name),
         email: expect.any(Email),
         password: expect.any(Password),
@@ -81,7 +82,7 @@ describe('User Repository', () => {
 
     expect(user).toStrictEqual(
       expect.objectContaining({
-        id: expect.any(Object),
+        id: expect.any(ObjectID),
         name: expect.any(Name),
         email: expect.any(Email),
         password: expect.any(Password),
