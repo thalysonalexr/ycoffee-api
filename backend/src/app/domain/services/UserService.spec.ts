@@ -1,8 +1,9 @@
 import faker from 'faker'
 
-import User from '@domain/schemas/User'
 import MongoMock from '@utils/test/MongoMock'
 
+import User from '@domain/schemas/User'
+import { UserEntity } from '@domain/entity/UserEntity'
 import UserService from '@domain/services/UserService'
 
 describe('Service User', () => {
@@ -25,7 +26,7 @@ describe('Service User', () => {
       faker.internet.password(6)
     )
 
-    expect(user).toStrictEqual(expect.any(Object))
+    expect(user).toBeInstanceOf(UserEntity)
   })
 
   it('should be able register new admin', async () => {
@@ -36,7 +37,7 @@ describe('Service User', () => {
       'admin'
     )
 
-    expect(user).toStrictEqual(expect.any(Object))
+    expect(user).toBeInstanceOf(UserEntity)
   })
 
   it('should be generate user token', async () => {
@@ -67,7 +68,7 @@ describe('Service User', () => {
       faker.internet.password(6),
     )
 
-    expect(user).toStrictEqual(expect.any(Object))
+    expect(user).toBeInstanceOf(UserEntity)
   })
 
   it('should be able remove user', async () => {

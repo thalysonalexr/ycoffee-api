@@ -1,22 +1,16 @@
 import { generateTokenJwt } from '@app/utils'
 
+import { IValueObject } from '@core/values/IValueObject'
+
 import { ObjectID } from '@domain/values/Mongo'
 import { Email, RoleType } from '@domain/values/User'
-import { IValueObject } from '@core/values/IValueObject'
 import { IUserEntity, UserEntity } from '@domain/entity/UserEntity'
-import UserRepository, { IUserRepository } from '@app/domain/repository/UserRepository'
+import UserRepository, { IUserRepository } from '@domain/repository/UserRepository'
 
-class UserService {
-  public constructor(
-    private _repository: IUserRepository<IUserEntity, IValueObject>
-  ) {}
+export class UserService {
+  public constructor(private _repository: IUserRepository<IUserEntity, IValueObject>) {}
 
-  public async register(
-    name: string,
-    email: string,
-    password: string,
-    role: RoleType = 'user'
-  ) {
+  public async register(name: string, email: string, password: string, role: RoleType = 'user') {
     if (role === 'user')
       return await this._repository.storeUser(
         UserEntity.create(name, email, password)
