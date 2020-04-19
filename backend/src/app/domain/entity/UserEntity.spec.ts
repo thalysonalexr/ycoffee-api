@@ -1,7 +1,7 @@
 import faker from 'faker'
 
-import { Name, Email, Password, Role } from '@domain/values/User'
 import { UserEntity } from '@domain/entity/UserEntity'
+import { Name, Email, Password, Role } from '@domain/values/User'
 
 describe('User Entity', () => {
   it('should be able create new instance user entity complete', () => {
@@ -36,14 +36,9 @@ describe('User Entity', () => {
       new Email(faker.internet.email()),
       new Password(faker.internet.password(6)),
       new Role('user'),
-    ).data([])
+    ).data()
 
-    expect(user).toStrictEqual(
-      expect.objectContaining({
-        data: expect.any(Object),
-        filtered: expect.arrayContaining([])
-      })
-    )
+    expect(user).toStrictEqual(expect.any(Object))
   })
 
   it('should be able create new instance user less role and get data', () => {
@@ -51,14 +46,9 @@ describe('User Entity', () => {
       new Name(faker.name.findName()),
       new Email(faker.internet.email()),
       new Password(faker.internet.password(6)),
-    ).data([])
+    ).data()
 
-    expect(user).toStrictEqual(
-      expect.objectContaining({
-        data: expect.any(Object),
-        filtered: expect.arrayContaining([])
-      })
-    )
+    expect(user).toStrictEqual(expect.any(Object))
   })
 
   it('should be able update user role', () => {
