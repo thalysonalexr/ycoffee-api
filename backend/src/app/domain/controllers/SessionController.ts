@@ -19,9 +19,7 @@ class SessionController {
       role: (user.role as object).toString()
     })
 
-    const udata = user.data(['password']).data
-
-    return res.status(200).json({ user: udata, token })
+    return res.status(200).json({ user: user.data('password'), token })
   }
 }
 

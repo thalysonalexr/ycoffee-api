@@ -16,9 +16,7 @@ class UserController {
       role: (user.role as object).toString()
     })
 
-    const udata = user.data(['password']).data
-
-    return res.status(201).json({ user: udata, token })
+    return res.status(201).json({ user: user.data('password'), token })
   }
 
   public async show(req: Request, res: Response) {
@@ -29,9 +27,22 @@ class UserController {
     if (!user)
       return res.status(404).json({ error: 'User not found.' })
 
-    const data = user.data(['password']).data
+    return res.status(200).json({
+      user: user.data('email', 'password', 'role', 'createdAt', 'updatedAt')
+    })
+  }
 
-    return res.status(200).json({ user: data })
+  public async profile(req: Request, res: Response) {
+    const { id } = req.session
+
+    const user = await UserService.getById(id)
+
+    if (!user)
+      return res.status(404).json({ error: 'User not found.' })
+
+    return res.status(200).json({
+      user: user.data('password')
+    })
   }
 
   public async update(req: Request, res: Response) {
@@ -43,9 +54,7 @@ class UserController {
     if (!user)
       return res.status(404).json({ error: 'User not found.' })
 
-    const data = user.data(['password']).data
-
-    return res.status(200).json({ user: data })
+    return res.status(200).json({ user: user.data('password') })
   }
 
   public async remove(req: Request, res: Response) {

@@ -1,19 +1,22 @@
 import { Router } from 'express'
 
+import Auth from '@app/middlewares/Auth'
 import Validator from '@app/middlewares/Validator'
-import AuthMiddleware from '@app/middlewares/Auth'
-import AuthorizationMiddleware from '@app/middlewares/Authorization'
+import OwnerCoffee from '@app/domain/middlewares/OwnerCoffee'
+import Authorization from '@app/middlewares/Authorization'
 
 import UserController from '@domain/controllers/UserController'
 import AdminController from '@domain/controllers/AdminController'
+import CoffeeController from '@domain/controllers/CoffeeController'
 import SessionController from '@domain/controllers/SessionController'
 
+import { StoreCoffee } from '@domain/validators/CoffeeValidator'
 import { StoreSession } from '@domain/validators/SessionValidator'
 import { StoreUser, UpdateUser } from '@domain/validators/UserValidator'
 
 const routes = Router()
 
-routes.get('/', AuthMiddleware, (req, res) => {
+routes.get('/', (req, res) => {
   return res.status(200).json({
     api: process.env.API_NAME,
     version: 'v1'
@@ -37,8 +40,13 @@ routes.post(
 )
 
 routes.get(
-  '/users/:id',  
-  AuthMiddleware,
+  '/users',
+  Auth,
+  UserController.profile
+)
+
+routes.get(
+  '/users/:id',
   UserController.show
 )
 
@@ -46,36 +54,84 @@ routes.put(
   '/users',
   UpdateUser.instance(),
   Validator,
-  AuthMiddleware,
+  Auth,
   UserController.update
 )
 
 routes.delete(
   '/users',
-  AuthMiddleware,
+  Auth,
   UserController.remove
 )
 
 // dashboard admin
 routes.post(
   '/users/:id/disable',
-  AuthMiddleware,
-  AuthorizationMiddleware,
-  AdminController.disable
+  Auth,
+  Authorization,
+  AdminController.disableUser
 )
 
 routes.post(
   '/users/:id/enable',
-  AuthMiddleware,
-  AuthorizationMiddleware,
-  AdminController.enable
+  Auth,
+  Authorization,
+  AdminController.enableUser
 )
 
 routes.delete(
   '/users/:id',
-  AuthMiddleware,
-  AuthorizationMiddleware,
-  AdminController.remove
+  Auth,
+  Authorization,
+  AdminController.removeUser
+)
+
+routes.delete(
+  '/coffee/:id/destroy',
+  Auth,
+  Authorization,
+  AdminController.destroyCoffee
+)
+
+// coffee routes
+routes.post(
+  '/coffee',
+  StoreCoffee.instance(),
+  Validator,
+  Auth,
+  CoffeeController.store
+)
+
+routes.get(
+  '/coffee/me',
+  Auth,
+  CoffeeController.profile
+)
+
+routes.get(
+  '/coffee/:id',
+  CoffeeController.show
+)
+
+routes.get(
+  '/coffee',
+  CoffeeController.index
+)
+
+routes.put(
+  '/coffee/:id',
+  StoreCoffee.instance(),
+  Validator,
+  Auth,
+  OwnerCoffee,
+  CoffeeController.update
+)
+
+routes.delete(
+  '/coffee/:id',
+  Auth,
+  OwnerCoffee,
+  CoffeeController.destroy
 )
 
 export default routes

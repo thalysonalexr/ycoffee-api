@@ -17,15 +17,19 @@ Produto mínimo viável para cadastro e gerenciamento de receitas de cafés.
     * foto
     * autor (usuario)
 
-  - [] Cadastrar usuário
+  - [x] Cadastrar usuário
     * nome
     * email
     * senha
     * papel (usuário, administrador, desabilitado)
 
+  - [x] Dashboard admin
+    - Habilitar/desabilitar usuário
+    - Remover usuários
+
 ## Não funcionalidades - RNF
 
-  - [] Persistir dados em banco não relacional (MongoDB)
+  - [x] Persistir dados em banco não relacional (MongoDB)
   - [] Ter uma aplicação mobile e web para apresentação (React Native e ReactJS)
 
 ## Metodologias

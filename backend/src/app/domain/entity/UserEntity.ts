@@ -1,18 +1,23 @@
-import { ObjectID, Name, Email, Password, Role, RoleType } from '@domain/values/User'
+import { IEntity } from '@core/entity/IEntity'
+import { ObjectID } from '@domain/values/Mongo'
+import { Name, Email, Password, Role, RoleType } from '@domain/values/User'
+
+import { filterObjectFields } from '@app/utils'
 
 export interface IUser {
-  name: Name,
-  email: Email,
-  password: Password,
-  role?: Role,
-  id?: ObjectID,
-  createdAt?: Date,
-  updatedAt?: Date,
+  name: Name
+  email: Email
+  password: Password
+  role?: Role
+  id?: ObjectID
+  createdAt?: Date
+  updatedAt?: Date
 }
 
-export interface IUserEntity extends IUser {
-  data(exclude: string[]): any
-  toRole(role: RoleType): IUserEntity
+type IUserIndexes = keyof IUser
+
+export interface IUserEntity extends IUser, IEntity<IUserIndexes> {
+  toRole(role: RoleType): UserEntity
 }
 
 export class UserEntity implements IUserEntity {
@@ -26,7 +31,7 @@ export class UserEntity implements IUserEntity {
     public updatedAt?: Date,
   ) {}
 
-  public static create(name: string, email: string, password: string): UserEntity {
+  public static create(name: string, email: string, password: string): IUserEntity {
     return new UserEntity(
       Name.toName(name),
       Email.toEmail(email),
@@ -35,7 +40,7 @@ export class UserEntity implements IUserEntity {
     )
   }
 
-  public static createAdmin(name: string, email: string, password: string): UserEntity {
+  public static createAdmin(name: string, email: string, password: string): IUserEntity {
     return new UserEntity(
       Name.toName(name),
       Email.toEmail(email),
@@ -52,7 +57,7 @@ export class UserEntity implements IUserEntity {
     role?: string,
     createdAt?: Date,
     updatedAt?: Date,
-  ): UserEntity {
+  ): IUserEntity {
     return new UserEntity(
       Name.toName(name),
       Email.toEmail(email),
@@ -64,13 +69,13 @@ export class UserEntity implements IUserEntity {
     )
   }
 
-  public toRole(role: RoleType): IUserEntity {
+  public toRole(role: RoleType): UserEntity {
     this.role = Role.toRole(role)
     return this
   }
 
-  public data(exclude: string[]) {
-    const data = {
+  public data(...exclude: IUserIndexes[]) {
+    return filterObjectFields({
       id: this.id?.toString(),
       name: this.name.toString(),
       email: this.email.toString(),
@@ -78,15 +83,6 @@ export class UserEntity implements IUserEntity {
       role: this.role?.toString(),
       createdAt: this.createdAt,
       updatedAt: this.updatedAt
-    }
-
-    const filtered = (Object.keys(data) as Array<keyof typeof data>).filter(
-      (field: keyof IUser) => {
-      if (exclude.includes(field)) {
-        delete data[field]
-      }
-    })
-
-    return { data, filtered }
+    }, ...exclude)
   }
 }
