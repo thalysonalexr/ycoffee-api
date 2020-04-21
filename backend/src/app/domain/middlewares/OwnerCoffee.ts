@@ -4,7 +4,6 @@ import { IMiddleware } from '@core/middlewares/IMiddleware'
 
 import { UserEntity } from '@domain/entity/UserEntity'
 import CoffeeService from '@domain/services/CoffeeService'
-import { ObjectID } from '../values/Mongo'
 
 export class OwnerCoffee implements IMiddleware {
   public async process(req: Request, res: Response, next: NextFunction) {
@@ -18,15 +17,10 @@ export class OwnerCoffee implements IMiddleware {
 
     let resourceOwner = (coffee.author as UserEntity).id
 
-    if (resourceOwner instanceof ObjectID) {
-
-      if (resourceOwner.toString() !== owner)
-        return res.status(403).json({ error: 'Forbidden' })
-
+    if (resourceOwner && resourceOwner.toString() === owner)
       return next()
-    }
 
-    return res.status(503).json({ error: 'Service unavailable.' })
+    return res.status(403).json({ error: 'Forbidden' })
   }
 }
 
