@@ -17,6 +17,8 @@ type CoffeeData = {
 }
 
 export class CoffeeService {
+  private readonly totalDocs = 20
+
   public constructor(private _repository: ICoffeeRepository<ICoffeeEntity, IValueObject>) {}
 
   public async create(coffee: CoffeeData) {
@@ -47,7 +49,9 @@ export class CoffeeService {
   }
 
   public async getAllBy(page: number, params: {} = {}) {
-    const { docs, pages, total } = await this._repository.findAll(page, 20, params)
+    const { docs, pages, total } = await this._repository.findAll(
+      page, this.totalDocs, params
+    )
 
     const cafes = await Promise.all(docs.map(coffee => coffee.data()))
 
