@@ -9,7 +9,7 @@ class UserController {
     if (await UserService.getByEmail(email))
       return res.status(422).json({ error: 'User already exists.' })
 
-    const user = await UserService.register(name, email, password)
+    const user = await UserService.register({ name, email, password, role: 'user' })
 
     const token = UserService.generateUserToken({
       id: (user.id as object).toString(),
@@ -46,10 +46,10 @@ class UserController {
   }
 
   public async update(req: Request, res: Response) {
-    const { id } = req.session
+    const { id, role } = req.session
     const { name, email, password } = req.body
 
-    const user = await UserService.update(id, name, email, password)
+    const user = await UserService.update(id, { name, email, password, role })
 
     if (!user)
       return res.status(404).json({ error: 'User not found.' })
