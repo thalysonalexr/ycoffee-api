@@ -9,6 +9,9 @@ declare namespace NodeJS {
     MONGO_USER: string
     MONGO_PASS: string
     MONGO_DB: string
+    UPLOAD_TYPE: 'local'
+    UPLOAD_PATH: string
+    UPLOAD_SIZE: string
     SECRET: string
   }
 }
