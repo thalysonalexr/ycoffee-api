@@ -1,8 +1,8 @@
 import { Router } from 'express'
 
 import Auth from '@app/middlewares/Auth'
+import Multer from '@app/middlewares/Multer'
 import Validator from '@app/middlewares/Validator'
-import OwnerCoffee from '@app/domain/middlewares/OwnerCoffee'
 import Authorization from '@app/middlewares/Authorization'
 
 import UserController from '@domain/controllers/UserController'
@@ -15,6 +15,7 @@ import {
   coffee,
   session,
   mongoId,
+  formData,
   contentJson,
   authorization
 } from '@app/validators/validate'
@@ -118,6 +119,15 @@ routes.post(
   CoffeeController.store
 )
 
+routes.put(
+  '/coffee/:id/image',
+  Multer,
+  [...authorization, ...formData, ...mongoId],
+  Validator,
+  Auth,
+  CoffeeController.storeImage
+)
+
 routes.get(
   '/coffee/me',
   Auth,
@@ -141,7 +151,6 @@ routes.put(
   [...authorization, ...contentJson, ...coffee],
   Validator,
   Auth,
-  OwnerCoffee,
   CoffeeController.update
 )
 
@@ -150,7 +159,6 @@ routes.delete(
   mongoId,
   Validator,
   Auth,
-  OwnerCoffee,
   CoffeeController.destroy
 )
 
