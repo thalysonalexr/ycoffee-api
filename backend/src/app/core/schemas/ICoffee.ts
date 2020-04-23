@@ -8,7 +8,11 @@ export interface ICoffee {
   preparation: string
   timePrepare: number
   portions: number
-  picture: string
+  image: {
+    name: string,
+    key: string,
+    size: number
+  }
   author: object & IUser
   updatedAt: Date
   createdAt: Date
