@@ -7,18 +7,24 @@ import { Email, RoleType } from '@domain/values/User'
 import { IUserEntity, UserEntity } from '@domain/entity/UserEntity'
 import UserRepository, { IUserRepository } from '@domain/repository/UserRepository'
 
+type UserData = {
+  name: string,
+  email: string,
+  password: string,
+  role: RoleType
+}
+
 export class UserService {
   public constructor(private _repository: IUserRepository<IUserEntity, IValueObject>) {}
 
-  public async register(name: string, email: string, password: string, role: RoleType = 'user') {
-    if (role === 'user')
-      return await this._repository.storeUser(
-        UserEntity.create(name, email, password)
-      )
-    else
-      return await this._repository.storeUser(
-        UserEntity.createAdmin(name, email, password)
-      )
+  public async register(user: UserData) {
+    return user.role === 'user'
+      ? await this._repository.storeUser(
+          UserEntity.create(user.name, user.email, user.password)
+        )
+      : await this._repository.storeUser(
+          UserEntity.createAdmin(user.name, user.email, user.password)
+        )
   }
 
   public async getByEmail(email: string) {
@@ -29,10 +35,14 @@ export class UserService {
     return await this._repository.findById(ObjectID.toObjectID(id))
   }
 
-  public async update(id: string, name: string, email: string, password: string) {
+  public async update(id: string, user: UserData) {
+    const userEntity = user.role === 'user'
+      ? UserEntity.create(user.name, user.email, user.password)
+      : UserEntity.createAdmin(user.name, user.email, user.password)
+    
     return await this._repository.updateUser(
       ObjectID.toObjectID(id),
-      UserEntity.create(name, email, password)
+      userEntity
     )
   }
 

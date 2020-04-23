@@ -1,11 +1,28 @@
 import { IValueObject } from '@core/values/IValueObject'
 
+export type ImageType = {
+  name: string,
+  key: string,
+  size: number,
+}
+
+export class CoffeeValueException extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = CoffeeValueException.name
+  }
+
+  public static new(message: string) {
+    return new CoffeeValueException(message)
+  }
+}
+
 export class TypeCoffe implements IValueObject {
   private _value: string
 
   public constructor(value: string) {
     if (value.length < 1 || value.length > 45) {
-      throw new Error(`The type "${value}" of coffee must be 1 to 45 characters`)
+      throw CoffeeValueException.new(`The type "${value}" of coffee must be 1 to 45 characters`)
     }
 
     this._value = value
@@ -25,7 +42,7 @@ export class Description implements IValueObject {
 
   public constructor(value: string) {
     if (value.length < 20 || value.length > 255) {
-      throw new Error(`The description "${value}" of coffee must be 20 to 255 characters`)
+      throw CoffeeValueException.new(`The description "${value}" of coffee must be 20 to 255 characters`)
     }
 
     this._value = value
@@ -49,7 +66,7 @@ export class Ingredients implements IValueObject {
 
   public add(ingredient: string) {
     if (ingredient.length > 45) {
-      throw new Error(`Ingredient "${ingredient}" must be length 45 or less`)
+      throw CoffeeValueException.new(`Ingredient "${ingredient}" must be length 45 or less`)
     }
 
     this._value.push(ingredient)
@@ -70,7 +87,7 @@ export class Preparation implements IValueObject {
 
   public constructor(value: string) {
     if (value.length < 45) {
-      throw new Error(`The "${value}" must be length 45 or more`)
+      throw CoffeeValueException.new(`The "${value}" must be length 45 or more`)
     }
 
     this._value = value
@@ -91,7 +108,7 @@ export class TimePrepare implements IValueObject {
 
   public constructor(value: number) {
     if (value < 0) {
-      throw new Error('Negative numbers are invalid')
+      throw CoffeeValueException.new('Negative numbers are invalid')
     }
 
     this._value = value
@@ -115,7 +132,7 @@ export class Portions implements IValueObject {
 
   public constructor(value: number) {
     if (value < 0) {
-      throw new Error('Negative numbers are invalid')
+      throw CoffeeValueException.new('Negative numbers are invalid')
     }
 
     this._value = value
@@ -130,23 +147,18 @@ export class Portions implements IValueObject {
   }
 }
 
-export class Picture implements IValueObject {
-  private _value: string
-  private readonly mask = new RegExp('^(https?:\\/\\/)?((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|((\\d{1,3}\\.){3}\\d{1,3}))(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*(\\?[;&a-z\\d%_.~+=-]*)?(\\#[-a-z\\d_]*)?$', 'i')
+export class Image implements IValueObject {
+  private _value: ImageType
 
-  public constructor(value: string) {
-    if(!this.mask.test(value)) {
-      throw new Error(`The value "${value}" is not valid URL`)
-    }
-
+  public constructor(value: ImageType) {
     this._value = value
   }
 
-  public toString() {
+  public toObject() {
     return this._value
   }
 
-  public static toPicture(value: string) {
-    return new Picture(value)
+  public static toImage(value: ImageType) {
+    return new Image(value)
   }
 }

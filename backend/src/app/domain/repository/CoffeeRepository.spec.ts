@@ -17,8 +17,7 @@ import {
   Preparation,
   Ingredients,
   TimePrepare,
-  Portions,
-  Picture
+  Portions
 } from '@domain/values/Coffee'
 
 const repository = new CoffeeRepository(Coffee)
@@ -48,7 +47,6 @@ describe('Coffee Repository', () => {
         faker.lorem.paragraphs(),
         faker.random.number(10),
         faker.random.number(5),
-        faker.internet.url(),
         id
       )
     )
@@ -62,7 +60,6 @@ describe('Coffee Repository', () => {
         preparation: expect.any(Preparation),
         timePrepare: expect.any(TimePrepare),
         portions: expect.any(Portions),
-        picture: expect.any(Picture),
         author: expect.any(UserEntity),
         createdAt: expect.any(Date),
         updatedAt: expect.any(Date),
@@ -88,7 +85,6 @@ describe('Coffee Repository', () => {
         preparation: expect.any(Preparation),
         timePrepare: expect.any(TimePrepare),
         portions: expect.any(Portions),
-        picture: expect.any(Picture),
         author: expect.any(UserEntity),
         createdAt: expect.any(Date),
         updatedAt: expect.any(Date),
@@ -132,7 +128,6 @@ describe('Coffee Repository', () => {
         faker.lorem.paragraphs(),
         faker.random.number(10),
         faker.random.number(5),
-        faker.internet.url(),
         user.id
       )
     )
@@ -146,12 +141,36 @@ describe('Coffee Repository', () => {
         preparation: expect.any(Preparation),
         timePrepare: expect.any(TimePrepare),
         portions: expect.any(Portions),
-        picture: expect.any(Picture),
         author: expect.any(UserEntity),
         createdAt: expect.any(Date),
         updatedAt: expect.any(Date),
       })
     )
+  })
+
+  it('should be not able update coffee because not exists', async () => {
+    const user = await factory.create<UserModel>('User')
+
+    const { id } = await factory.create<CoffeeModel>('Coffee', {
+      author: user.id
+    })
+
+    await Coffee.deleteMany({})
+
+    const coffee = await repository.updateCoffee(
+      ObjectID.toObjectID(id),
+      CoffeeEntity.create(
+        faker.name.title(),
+        faker.lorem.words(10),
+        [faker.name.title(), faker.name.title()],
+        faker.lorem.paragraphs(),
+        faker.random.number(10),
+        faker.random.number(5),
+        user.id
+      )
+    )
+
+    expect(coffee).toBe(null)
   })
 
   it('should be able destroy a coffee', async () => {

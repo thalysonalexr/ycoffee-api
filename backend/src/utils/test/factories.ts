@@ -24,7 +24,11 @@ factory.define('Coffee', Coffee, {
   preparation: faker.lorem.paragraphs(),
   timePrepare: faker.random.number(10),
   portions: faker.random.number(5),
-  picture: faker.internet.url(),
+  image: faker.random.objectElement({
+    name: faker.random.alphaNumeric(16),
+    key: faker.random.alphaNumeric(16),
+    size: faker.random.number(16)
+  }),
   author: faker.random.alphaNumeric(12)
 })
 

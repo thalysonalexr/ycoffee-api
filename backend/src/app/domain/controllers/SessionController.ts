@@ -11,6 +11,9 @@ class SessionController {
     if (!user)
       return res.status(401).json({ error: 'User not exists.' })
 
+    if (user.role && user.role.toString() === 'disabled')
+      return res.status(401).json({ error: 'Denied User.' })
+
     if (!user.password.compare(password))
       return res.status(401).json({ error: 'Wrong password.' })
 

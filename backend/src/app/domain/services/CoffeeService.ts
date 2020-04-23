@@ -1,7 +1,7 @@
 import { IValueObject } from '@core/values/IValueObject'
 
 import { ObjectID } from '@domain/values/Mongo'
-import { TypeCoffe } from '@domain/values/Coffee'
+import { TypeCoffe, ImageType } from '@domain/values/Coffee'
 import { ICoffeeEntity, CoffeeEntity } from '@domain/entity/CoffeeEntity'
 import CoffeeRepository, { ICoffeeRepository } from '@domain/repository/CoffeeRepository'
 
@@ -12,11 +12,12 @@ type CoffeeData = {
   preparation: string,
   timePrepare: number,
   portions: number,
-  picture: string,
   author: string,
 }
 
 export class CoffeeService {
+  private readonly totalDocs = 20
+
   public constructor(private _repository: ICoffeeRepository<ICoffeeEntity, IValueObject>) {}
 
   public async create(coffee: CoffeeData) {
@@ -28,9 +29,20 @@ export class CoffeeService {
         coffee.preparation,
         coffee.timePrepare,
         coffee.portions,
-        coffee.picture,
         coffee.author,
       )
+    )
+  }
+
+  public async appendImageByAuthor(id: string, author: string, image: ImageType) {
+    const coffee = await this._repository.findById(id)
+
+    if (!coffee || coffee.author.toString() !== author)
+      return null
+
+    return await this._repository.updateCoffee(
+      ObjectID.toObjectID(id),
+      coffee.appendImage(image)
     )
   }
 
@@ -47,27 +59,42 @@ export class CoffeeService {
   }
 
   public async getAllBy(page: number, params: {} = {}) {
-    const { docs, pages, total } = await this._repository.findAll(page, 20, params)
+    const { docs, pages, total } = await this._repository.findAll(
+      page, this.totalDocs, params
+    )
 
     const cafes = await Promise.all(docs.map(coffee => coffee.data()))
 
     return { cafes, pages, total }
   }
 
-  public async update(id: string, coffee: CoffeeData) {
+  public async updateByAuthor(id: string, data: CoffeeData) {
+    const coffee = await this._repository.findById(id)
+
+    if (!coffee || coffee.author.toString() !== data.author)
+      return null
+
     return await this._repository.updateCoffee(
       ObjectID.toObjectID(id),
       CoffeeEntity.create(
-        coffee.type,
-        coffee.description,
-        coffee.ingredients,
-        coffee.preparation,
-        coffee.timePrepare,
-        coffee.portions,
-        coffee.picture,
-        coffee.author,
+        data.type,
+        data.description,
+        data.ingredients,
+        data.preparation,
+        data.timePrepare,
+        data.portions,
+        data.author,
       )
     )
+  }
+
+  public async destroyByAuthor(id: string, author: string) {
+    const coffee = await this._repository.findById(id)
+
+    if (!coffee || coffee.author.toString() !== author)
+      return null
+
+    return await this.destroy(id)
   }
 
   public async destroy(id: string) {

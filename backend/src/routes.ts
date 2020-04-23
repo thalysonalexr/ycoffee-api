@@ -1,8 +1,8 @@
 import { Router } from 'express'
 
 import Auth from '@app/middlewares/Auth'
+import Multer from '@app/middlewares/Multer'
 import Validator from '@app/middlewares/Validator'
-import OwnerCoffee from '@app/domain/middlewares/OwnerCoffee'
 import Authorization from '@app/middlewares/Authorization'
 
 import UserController from '@domain/controllers/UserController'
@@ -10,31 +10,38 @@ import AdminController from '@domain/controllers/AdminController'
 import CoffeeController from '@domain/controllers/CoffeeController'
 import SessionController from '@domain/controllers/SessionController'
 
-import { StoreCoffee } from '@domain/validators/CoffeeValidator'
-import { StoreSession } from '@domain/validators/SessionValidator'
-import { StoreUser, UpdateUser } from '@domain/validators/UserValidator'
+import {
+  user,
+  coffee,
+  session,
+  mongoId,
+  formData,
+  contentJson,
+  authorization
+} from '@app/validators/validate'
 
 const routes = Router()
 
 routes.get('/', (req, res) => {
   return res.status(200).json({
     api: process.env.API_NAME,
-    version: 'v1'
+    version: 'v1',
+    docs: 'https://github.com/thalysonalexr/ycoffee/tree/master/docs'
   })
 })
 
 // authentication
 routes.post(
   '/session',
-  StoreSession.instance(),
+  [...contentJson, ...session],
   Validator,
   SessionController.store
 )
-  
+
 // users routes
 routes.post(
   '/users',
-  StoreUser.instance(),
+  [...contentJson, ...user],
   Validator,
   UserController.store
 )
@@ -47,12 +54,14 @@ routes.get(
 
 routes.get(
   '/users/:id',
+  mongoId,
+  Validator,
   UserController.show
 )
 
 routes.put(
   '/users',
-  UpdateUser.instance(),
+  [...authorization, ...contentJson, ...user],
   Validator,
   Auth,
   UserController.update
@@ -67,6 +76,8 @@ routes.delete(
 // dashboard admin
 routes.post(
   '/users/:id/disable',
+  mongoId,
+  Validator,
   Auth,
   Authorization,
   AdminController.disableUser
@@ -74,6 +85,8 @@ routes.post(
 
 routes.post(
   '/users/:id/enable',
+  mongoId,
+  Validator,
   Auth,
   Authorization,
   AdminController.enableUser
@@ -81,6 +94,8 @@ routes.post(
 
 routes.delete(
   '/users/:id',
+  mongoId,
+  Validator,
   Auth,
   Authorization,
   AdminController.removeUser
@@ -88,6 +103,8 @@ routes.delete(
 
 routes.delete(
   '/coffee/:id/destroy',
+  mongoId,
+  Validator,
   Auth,
   Authorization,
   AdminController.destroyCoffee
@@ -96,10 +113,19 @@ routes.delete(
 // coffee routes
 routes.post(
   '/coffee',
-  StoreCoffee.instance(),
+  [...authorization, ...contentJson, ...coffee],
   Validator,
   Auth,
   CoffeeController.store
+)
+
+routes.put(
+  '/coffee/:id/image',
+  Multer,
+  [...authorization, ...formData, ...mongoId],
+  Validator,
+  Auth,
+  CoffeeController.storeImage
 )
 
 routes.get(
@@ -110,6 +136,8 @@ routes.get(
 
 routes.get(
   '/coffee/:id',
+  mongoId,
+  Validator,
   CoffeeController.show
 )
 
@@ -120,17 +148,17 @@ routes.get(
 
 routes.put(
   '/coffee/:id',
-  StoreCoffee.instance(),
+  [...authorization, ...contentJson, ...coffee],
   Validator,
   Auth,
-  OwnerCoffee,
   CoffeeController.update
 )
 
 routes.delete(
   '/coffee/:id',
+  mongoId,
+  Validator,
   Auth,
-  OwnerCoffee,
   CoffeeController.destroy
 )
 

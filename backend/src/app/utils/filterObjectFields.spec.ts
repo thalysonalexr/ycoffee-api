@@ -8,6 +8,7 @@ test('should be able filter undefined and exclude properties in object', () => {
     name: faker.name.findName(),
     email: faker.internet.email(),
     url: faker.internet.url(),
+    obj: {}
   }
 
   const result = filterObjectFields(obj, 'url')

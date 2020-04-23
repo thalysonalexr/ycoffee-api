@@ -4,12 +4,23 @@ import { IValueObject } from '@core/values/IValueObject'
 
 export type RoleType = 'admin' | 'disabled' | 'user'
 
+export class UserValueException extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = UserValueException.name
+  }
+
+  public static new(message: string) {
+    return new UserValueException(message)
+  }
+}
+
 export class Name implements IValueObject {
   private _value: string
 
   constructor(value: string) {
     if (value.length < 3 || value.length > 255) {
-      throw Error(`The name ${value} is invalid`)
+      throw UserValueException.new(`The name ${value} is invalid`)
     }
     this._value = value
   }
@@ -29,7 +40,7 @@ export class Email implements IValueObject {
 
   constructor(value: string) {
     if (!this.mask.test(String(value).toLowerCase())) {
-      throw new Error(`The e-mail "${value}" format is invalid.`)
+      throw UserValueException.new(`The e-mail "${value}" format is invalid.`)
     }
     this._value = value.toLowerCase()
   }
@@ -48,7 +59,7 @@ export class Password implements IValueObject {
 
   constructor(value: string) {
     if (value.length < 5 || value.length > 255) {
-      throw new Error(`The password "${value}" is invalid.`)
+      throw UserValueException.new(`The password "${value}" is invalid.`)
     }
     this._value = value
   }

@@ -53,7 +53,7 @@ export class UserRepository implements IUserRepository<IUserEntity, IValueObject
 
   public async updateUser(id: ObjectID, u: IUserEntity): Promise<IUserEntity | null> {
     const user = await this._instance.findByIdAndUpdate(
-      id.toString(), u.data('id', 'role', 'updatedAt', 'createdAt'),
+      id.toString(), u.data('id', 'updatedAt', 'createdAt'),
       { new: true }
     )
 

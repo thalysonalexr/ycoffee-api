@@ -20,32 +20,34 @@ describe('Service User', () => {
   })
 
   it('should be able register new user', async () => {
-    const user = await UserService.register(
-      faker.name.findName(),
-      faker.internet.email(),
-      faker.internet.password(6)
-    )
+    const user = await UserService.register({
+      name: faker.name.findName(),
+      email: faker.internet.email(),
+      password: faker.internet.password(6),
+      role: 'user'
+    })
 
     expect(user).toBeInstanceOf(UserEntity)
   })
 
   it('should be able register new admin', async () => {
-    const user = await UserService.register(
-      faker.name.findName(),
-      faker.internet.email(),
-      faker.internet.password(6),
-      'admin'
-    )
+    const user = await UserService.register({
+      name: faker.name.findName(),
+      email: faker.internet.email(),
+      password: faker.internet.password(6),
+      role: 'admin'
+    })
 
     expect(user).toBeInstanceOf(UserEntity)
   })
 
   it('should be generate user token', async () => {
-    const { id } = await UserService.register(
-      faker.name.findName(),
-      faker.internet.email(),
-      faker.internet.password(6)
-    )
+    const { id } = await UserService.register({
+      name: faker.name.findName(),
+      email: faker.internet.email(),
+      password: faker.internet.password(6),
+      role: 'user'
+    })
 
     process.env.SECRET = 'secret@key'
 
@@ -55,28 +57,30 @@ describe('Service User', () => {
   })
 
   it('should be able update user', async () => {
-    const { id } = await UserService.register(
-      faker.name.findName(),
-      faker.internet.email(),
-      faker.internet.password(6)
-    )
+    const { id } = await UserService.register({
+      name: faker.name.findName(),
+      email: faker.internet.email(),
+      password: faker.internet.password(6),
+      role: 'user'
+    })
 
-    const user = await UserService.update(
-      <string>id?.toString(),
-      faker.name.findName(),
-      faker.internet.email(),
-      faker.internet.password(6),
-    )
+    const user = await UserService.update(<string>id?.toString(), {
+      name: faker.name.findName(),
+      email: faker.internet.email(),
+      password: faker.internet.password(6),
+      role: 'user'
+    })
 
     expect(user).toBeInstanceOf(UserEntity)
   })
 
   it('should be able remove user', async () => {
-    const { id } = await UserService.register(
-      faker.name.findName(),
-      faker.internet.email(),
-      faker.internet.password(6)
-    )
+    const { id } = await UserService.register({
+      name: faker.name.findName(),
+      email: faker.internet.email(),
+      password: faker.internet.password(6),
+      role: 'user'
+    })
 
     const result = await UserService.remove(<string>id?.toString())
 
@@ -84,11 +88,12 @@ describe('Service User', () => {
   })
 
   it('should be able update role', async () => {
-    const { id } = await UserService.register(
-      faker.name.findName(),
-      faker.internet.email(),
-      faker.internet.password(6)
-    )
+    const { id } = await UserService.register({
+      name: faker.name.findName(),
+      email: faker.internet.email(),
+      password: faker.internet.password(6),
+      role: 'user'
+    })
 
     const result = await UserService.updateRole(<string>id?.toString(), 'disabled')
 

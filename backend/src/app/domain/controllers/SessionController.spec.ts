@@ -142,4 +142,21 @@ describe('Session', () => {
     
     expect(response.status).toBe(401)
   })
+
+  it('should be not able create session if user are disabled', async () => {
+    const pass = faker.internet.password(6)
+    const user = await factory.create<UserModel>('User', {
+      role: 'disabled',
+      password: Password.toPassword(pass).hash().toString()
+    })
+
+    const response = await request(app)
+      .post('/v1/session')
+      .send({
+        email: user.email,
+        password: pass
+      })
+
+    expect(response.status).toBe(401)
+  })
 })

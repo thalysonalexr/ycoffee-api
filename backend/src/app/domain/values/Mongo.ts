@@ -2,12 +2,23 @@ import { isValidObjectId } from 'mongoose'
 
 import { IValueObject } from '@core/values/IValueObject'
 
+export class MongoValueException extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = MongoValueException.name
+  }
+
+  public static new(message: string) {
+    return new MongoValueException(message)
+  }
+}
+
 export class ObjectID implements IValueObject {
   private _value: string
 
   constructor(value: string) {
     if (!isValidObjectId(value)) {
-      throw new Error(`The id ${value} is invalid objectId Mongo.`)
+      throw MongoValueException.new(`The id ${value} is invalid objectId Mongo.`)
     }
     this._value = value
   }

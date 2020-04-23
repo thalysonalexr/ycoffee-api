@@ -33,7 +33,6 @@ describe('Service Coffee', () => {
       preparation: faker.lorem.paragraphs(),
       timePrepare: faker.random.number(10),
       portions: faker.random.number(5),
-      picture: faker.internet.url(),
       author: id
     })
 
@@ -120,15 +119,14 @@ describe('Service Coffee', () => {
       author: user.id
     })
 
-    const coffee = await CoffeeService.update(id, {
+    const coffee = await CoffeeService.updateByAuthor(id, {
       type: faker.name.title(),
       description: faker.lorem.words(5),
       ingredients: [faker.name.title(), faker.name.title()],
       preparation: faker.lorem.paragraphs(),
       timePrepare: faker.random.number(10),
       portions: faker.random.number(5),
-      picture: faker.internet.url(),
-      author: id
+      author: user.id
     })
 
     expect(coffee).toBeInstanceOf(CoffeeEntity)
@@ -144,5 +142,56 @@ describe('Service Coffee', () => {
     const result = await CoffeeService.destroy(id)
 
     expect(result).toBe(true)
+  })
+
+  it('should be not able append image because coffee not exists', async () => {
+    const user = await factory.create<UserModel>('User')
+
+    const { id } = await factory.create<CoffeeModel>('Coffee', {
+      author: user.id
+    })
+
+    await Coffee.deleteMany({})
+
+    const result = await CoffeeService.appendImageByAuthor(id, user.id, {
+      name: faker.random.alphaNumeric(16),
+      key: faker.random.alphaNumeric(16),
+      size: faker.random.number(5000),
+    })
+
+    expect(result).toBe(null)
+  })
+
+  it('should be not able append image because not owner', async () => {
+    const user1 = await factory.create<UserModel>('User', { email: 'hello@email.com' })
+    const user2 = await factory.create<UserModel>('User', { email: 'world@email.com' })
+
+    const { id } = await factory.create<CoffeeModel>('Coffee', {
+      author: user1.id
+    })
+
+    const result = await CoffeeService.appendImageByAuthor(id, user2.id, {
+      name: faker.random.alphaNumeric(16),
+      key: faker.random.alphaNumeric(16),
+      size: faker.random.number(5000),
+    })
+
+    expect(result).toBe(null)
+  })
+
+  it('should be able append new image in coffee', async () => {
+    const user = await factory.create<UserModel>('User')
+
+    const { id } = await factory.create<CoffeeModel>('Coffee', {
+      author: user.id
+    })
+
+    const result = await CoffeeService.appendImageByAuthor(id, user.id, {
+      name: faker.random.alphaNumeric(16),
+      key: faker.random.alphaNumeric(16),
+      size: faker.random.number(5000),
+    })
+
+    expect(result).toBeInstanceOf(CoffeeEntity)
   })
 })
