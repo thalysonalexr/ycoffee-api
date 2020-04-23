@@ -1,5 +1,7 @@
 import faker from 'faker'
 import request from 'supertest'
+import path from 'path'
+import fs from 'fs'
 
 import app from '../../../app'
 
@@ -11,6 +13,9 @@ import MongoMock from '@utils/test/MongoMock'
 import User, { UserModel } from '@domain/schemas/User'
 import Coffee, { CoffeeModel } from '@domain/schemas/Coffee'
 
+const dirUploads = path.resolve(__dirname, '..', '..', '..', '..', 'tmp', 'tests')
+const dirExamples = path.resolve(__dirname, '..', '..', '..', '..', 'tmp', 'tests', 'examples')
+
 describe('Coffee actions', () => {
   beforeAll(async () => {
     await MongoMock.connect()
@@ -18,6 +23,12 @@ describe('Coffee actions', () => {
 
   afterAll(async () => {
     await MongoMock.disconnect()
+    // remove all images in upload test
+    fs.readdir(dirUploads, (err, files) => {
+      for (const file of files) {
+        fs.unlink(path.join(dirUploads, file), () => {})
+      }
+    })
   })
 
   beforeEach(async () => {
@@ -37,7 +48,6 @@ describe('Coffee actions', () => {
       preparation: faker.lorem.paragraphs(),
       timePrepare: faker.random.number(10),
       portions: faker.random.number(5),
-      picture: faker.internet.url(),
     }
 
     const response = await request(app)
@@ -56,7 +66,6 @@ describe('Coffee actions', () => {
           preparation: expect.any(String),
           timePrepare: expect.any(Number),
           portions: expect.any(Number),
-          picture: expect.any(String),
           author: expect.any(Object),
           updatedAt: expect.any(String),
           createdAt: expect.any(String)
@@ -86,7 +95,6 @@ describe('Coffee actions', () => {
           preparation: expect.any(String),
           timePrepare: expect.any(Number),
           portions: expect.any(Number),
-          picture: expect.any(String),
           author: expect.any(Object),
           updatedAt: expect.any(String),
           createdAt: expect.any(String)
@@ -212,7 +220,6 @@ describe('Coffee actions', () => {
       preparation: faker.lorem.paragraphs(),
       timePrepare: faker.random.number(10),
       portions: faker.random.number(5),
-      picture: faker.internet.url(),
     }
 
     const response = await request(app)
@@ -231,36 +238,12 @@ describe('Coffee actions', () => {
           preparation: expect.any(String),
           timePrepare: expect.any(Number),
           portions: expect.any(Number),
-          picture: expect.any(String),
           author: expect.any(Object),
           updatedAt: expect.any(String),
           createdAt: expect.any(String)
         })
       })
     )
-  })
-
-  it('should be not able update coffee because not owner', async () => {
-    const user1 = await factory.create<UserModel>('User', { email: 'hello@email.com' })
-    const user2 = await factory.create<UserModel>('User', { email: 'world@email.com' })
-
-    const { id } = await factory.create<CoffeeModel>('Coffee', { author: user1.id })
-    const token = generateTokenJwt(process.env.SECRET, { id: user2.id })
-
-    const response = await request(app)
-      .put(`/v1/coffee/${id}`)
-      .set('Authorization', `Bearer ${token}`)
-      .send({
-        type: faker.name.title(),
-        description: faker.lorem.words(10),
-        ingredients: [faker.name.title(), faker.name.title()],
-        preparation: faker.lorem.paragraphs(),
-        timePrepare: faker.random.number(10),
-        portions: faker.random.number(5),
-        picture: faker.internet.url(),
-      })
-
-    expect(response.status).toBe(403)
   })
 
   it('should be not able update coffee because not exists', async () => {
@@ -281,7 +264,6 @@ describe('Coffee actions', () => {
         preparation: faker.lorem.paragraphs(),
         timePrepare: faker.random.number(10),
         portions: faker.random.number(5),
-        picture: faker.internet.url(),
       })
 
     expect(response.status).toBe(404)
@@ -300,20 +282,6 @@ describe('Coffee actions', () => {
     expect(response.status).toBe(204)
   })
 
-  it('should be not able destroy coffee because not owner', async () => {
-    const user1 = await factory.create<UserModel>('User', { email: 'hello@email.com' })
-    const user2 = await factory.create<UserModel>('User', { email: 'world@email.com' })
-
-    const { id } = await factory.create<CoffeeModel>('Coffee', { author: user1.id })
-    const token = generateTokenJwt(process.env.SECRET, { id: user2.id })
-
-    const response = await request(app)
-      .delete(`/v1/coffee/${id}`)
-      .set('Authorization', `Bearer ${token}`)
-
-    expect(response.status).toBe(403)
-  })
-
   it('should be not able destroy coffee because not exists', async () => {
     const user = await factory.create<UserModel>('User')
 
@@ -327,5 +295,81 @@ describe('Coffee actions', () => {
       .set('Authorization', `Bearer ${token}`)
 
     expect(response.status).toBe(404)
+  })
+
+  it('should be not able append image because unsupported media type', async () => {
+    const user = await factory.create<UserModel>('User')
+
+    const { id } = await factory.create<CoffeeModel>('Coffee', { author: user.id })
+    const token = generateTokenJwt(process.env.SECRET, { id: user.id })
+
+    const response = await request(app)
+      .put(`/v1/coffee/${id}/image`)
+      .attach('image', path.resolve(dirExamples, 'example.pdf'))
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(response.status).toBe(415)
+  })
+
+  it('should be not able append image because exceeds allowed size', async () => {
+    const user = await factory.create<UserModel>('User')
+
+    const { id } = await factory.create<CoffeeModel>('Coffee', { author: user.id })
+    const token = generateTokenJwt(process.env.SECRET, { id: user.id })
+
+    const response = await request(app)
+      .put(`/v1/coffee/${id}/image`)
+      .attach('image', path.resolve(dirExamples, 'full.jpg'))
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(response.status).toBe(413)
+  })
+
+  it('should be not able append image because coffee not exists', async () => {
+    const user = await factory.create<UserModel>('User')
+
+    const { id } = await factory.create<CoffeeModel>('Coffee', { author: user.id })
+    const token = generateTokenJwt(process.env.SECRET, { id: user.id })
+
+    await Coffee.deleteMany({})
+
+    const response = await request(app)
+      .put(`/v1/coffee/${id}/image`)
+      .attach('image', path.resolve(dirExamples, 'example.jpg'))
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(response.status).toBe(404)
+  })
+
+  it('should be able append image in coffee', async () => {
+    const user = await factory.create<UserModel>('User')
+
+    const { id } = await factory.create<CoffeeModel>('Coffee', { author: user.id })
+    const token = generateTokenJwt(process.env.SECRET, { id: user.id })
+
+    const response = await request(app)
+      .put(`/v1/coffee/${id}/image`)
+      .attach('image', path.resolve(dirExamples, 'example.jpg'))
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(response.status).toBe(200)
+  })
+
+  it('should be able destroy coffee with image', async () => {
+    const user = await factory.create<UserModel>('User')
+
+    const { id } = await factory.create<CoffeeModel>('Coffee', { author: user.id })
+    const token = generateTokenJwt(process.env.SECRET, { id: user.id })
+
+    await request(app)
+      .put(`/v1/coffee/${id}/image`)
+      .attach('image', path.resolve(dirExamples, 'example.jpg'))
+      .set('Authorization', `Bearer ${token}`)
+
+    const response = await request(app)
+      .delete(`/v1/coffee/${id}`)
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(response.status).toBe(204)
   })
 })

@@ -1,4 +1,6 @@
 import { Request, Response } from 'express'
+import fs from 'fs'
+import path from 'path'
 
 import CoffeeService from '@domain/services/CoffeeService'
 
@@ -12,7 +14,6 @@ export class CoffeeController {
       preparation,
       timePrepare,
       portions,
-      picture,
     } = req.body
 
     const coffee = await CoffeeService.create({
@@ -22,11 +23,32 @@ export class CoffeeController {
       preparation,
       timePrepare,
       portions,
-      picture,
       author
     })
 
     return res.status(201).json({ coffee: coffee.data() })
+  }
+
+  public async storeImage(req: Request, res: Response) {
+    const { id } = req.params
+    const { id: author } = req.session
+    const { originalname: name, filename: key, size } = req.file
+
+    const coffee = await CoffeeService.appendImageByAuthor(id, author, {
+      name,
+      key,
+      size
+    })
+
+    if (!coffee) {
+      fs.unlink(path.resolve(
+        __dirname, '..', '..', '..', '..', 'tmp', process.env.UPLOAD_PATH, key
+      ), () => {})
+
+      return res.status(404).json({ error: 'Coffee not found.' })
+    }
+
+    return res.json({ coffee: coffee.data() })
   }
 
   public async show(req: Request, res: Response) {
@@ -44,7 +66,7 @@ export class CoffeeController {
     const { page = 1 } = req.query
     const { id } = req.session
 
-    const cafes = await CoffeeService.getAllByAuthor(page, id)
+    const cafes = await CoffeeService.getAllByAuthor((page as number), id)
 
     return res.status(200).json(cafes)
   }
@@ -54,11 +76,11 @@ export class CoffeeController {
 
     if (!type)
       return res.status(200).json(
-        await CoffeeService.getAllBy(page)
+        await CoffeeService.getAllBy((page as number))
       )
 
     return res.status(200).json(
-      await CoffeeService.getAllByType(page, type)
+      await CoffeeService.getAllByType((page as number), (type as string))
     )
   }
 
@@ -72,27 +94,30 @@ export class CoffeeController {
       preparation,
       timePrepare,
       portions,
-      picture,
     } = req.body
 
-    const coffee = await CoffeeService.update(id, {
+    const coffee = await CoffeeService.updateByAuthor(id, {
       type,
       description,
       ingredients,
       preparation,
       timePrepare,
       portions,
-      picture,
       author
     })
 
-    return res.status(200).json({ coffee: coffee?.data() })
+    if (!coffee)
+      return res.status(404).json({ error: 'Coffee not updated.' })
+
+    return res.status(200).json({ coffee: coffee.data() })
   }
 
   public async destroy(req: Request, res: Response) {
     const { id } = req.params
+    const { id: author } = req.session
 
-    await CoffeeService.destroy(id)
+    if (null === await CoffeeService.destroyByAuthor(id, author))
+      return res.status(404).json({ error: 'Coffee not removed.' })
 
     return res.status(204).end()
   }

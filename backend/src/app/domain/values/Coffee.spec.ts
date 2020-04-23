@@ -7,7 +7,7 @@ import {
   Preparation,
   TimePrepare,
   Portions,
-  Picture
+  Image
 } from '@domain/values/Coffee'
 
 describe('Unit test to value objects Coffee', () => {
@@ -106,13 +106,18 @@ describe('Unit test to value objects Coffee', () => {
   })
 
   it('should be able create new picture', () => {
-    const url = faker.internet.url()
-    expect(Picture.toPicture(url).toString()).toBe(url)
-  })
+    const image = {
+      name: faker.random.alphaNumeric(16),
+      key: faker.random.alphaNumeric(16),
+      size: faker.random.number(5000)
+    }
 
-  it('should be not able create picture is not url', () => {
-    try {
-      expect(Picture.toPicture(faker.random.alphaNumeric(10))).toThrow(Error)
-    } catch (err) {}
+    expect(Image.toImage(image).toObject()).toStrictEqual(
+      expect.objectContaining({
+        name: image.name,
+        key: image.key,
+        size: image.size
+      })
+    )
   })
 })

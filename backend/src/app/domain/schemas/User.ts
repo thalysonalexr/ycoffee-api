@@ -2,7 +2,7 @@ import mongoose, { Document, Schema } from 'mongoose'
 
 import { IUser } from '@app/core/schemas/IUser'
 
-export type UserModel = Document & IUser;
+export type UserModel = Document & IUser
 
 const UserSchema = new Schema({
   name: {

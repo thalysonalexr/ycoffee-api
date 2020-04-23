@@ -1,11 +1,32 @@
 import mongoosePaginate from 'mongoose-paginate'
-import mongoose, { Document, Schema } from 'mongoose'
+import mongoose, { Document, Schema, Query } from 'mongoose'
+import path from 'path'
+import fs from 'fs'
 
 import { ICoffee } from '@core/schemas/ICoffee'
 
 export type CoffeeModel = Document & ICoffee
 
-const CoffeeSchema = new Schema({
+async function destroyImage(schema: Query<any>) {
+  const { _id } = schema.getQuery()
+
+  const coffee = await schema.findOne({ _id })
+
+  if (!coffee)
+    return
+
+  const { image: { key } } = coffee
+
+  if (key !== undefined)
+    fs.unlink(
+      path.resolve(
+        __dirname, '..', '..', '..', '..', 'tmp', process.env.UPLOAD_PATH, key
+      ),
+      () => {}
+    )
+}
+
+const CoffeeSchema = new Schema<CoffeeModel>({
   type: {
     type: String,
     required: true,
@@ -39,19 +60,32 @@ const CoffeeSchema = new Schema({
     type: Number,
     required: false,
   },
-  picture: {
-    type: String,
-    required: true,
-    trim: true,
-    lowercase: true,
+  image: {
+    name: {
+      type: String,
+      trim: true,
+    },
+    key: {
+      type: String,
+      trim: true,
+    },
+    size: Number,
   },
   author: {
     type: Schema.Types.ObjectId,
     required: true,
-    ref: 'User'
+    ref: 'User',
   },
 }, { timestamps: true })
 
 CoffeeSchema.plugin(mongoosePaginate)
+
+CoffeeSchema.pre('findOneAndUpdate', async function() {
+  await destroyImage(this)
+})
+
+CoffeeSchema.pre('findOneAndRemove', async function() {
+  await destroyImage(this)
+})
 
 export default mongoose.model<CoffeeModel>('Coffee', CoffeeSchema)

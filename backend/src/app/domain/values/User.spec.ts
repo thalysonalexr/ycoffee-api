@@ -1,6 +1,6 @@
 import faker from 'faker'
 
-import { Name, Email, Password, Role } from '@domain/values/User'
+import { Name, Email, Password, Role, UserValueException } from '@domain/values/User'
 
 describe('Unit test to value objects User', () => {
   it('should be able create new valid name', () => {
@@ -11,7 +11,7 @@ describe('Unit test to value objects User', () => {
   it('should be not able create new name very short or long', () => {
     const name = faker.name.findName().substring(0, 2)
     try {
-      expect(new Name(name)).toThrow(Error)
+      expect(new Name(name)).toThrow(UserValueException)
     } catch (err) {}
   })
 
@@ -23,7 +23,7 @@ describe('Unit test to value objects User', () => {
   it('should be not able create new email invalid format', () =>{
     const email = faker.internet.email().replace('@', '')
     try {
-      expect(new Email(email)).toThrow(Error)
+      expect(new Email(email)).toThrow(UserValueException)
     } catch(err) {}
   })
 
@@ -37,7 +37,7 @@ describe('Unit test to value objects User', () => {
   it('shoulb be not able create password very short', () => {
     const password = faker.internet.password(3)
     try {
-      expect(new Password(password)).toThrow(Error)
+      expect(new Password(password)).toThrow(UserValueException)
     } catch (err) {}
   })
 

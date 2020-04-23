@@ -2,7 +2,7 @@ import faker from 'faker'
 
 import { Types } from 'mongoose'
 
-import { ObjectID } from '@domain/values/Mongo'
+import { ObjectID, MongoValueException } from '@domain/values/Mongo'
 
 describe('Unit test to value objects Mongo', () => {
   it('should be able create new valid objectID', () => {
@@ -13,7 +13,7 @@ describe('Unit test to value objects Mongo', () => {
   it('should be able create invalid objectID', () => {
     const objectId = faker.name.findName().substring(0, 2)
     try {
-      expect(new ObjectID(objectId)).toThrow(Error)
+      expect(new ObjectID(objectId)).toThrow(MongoValueException)
     } catch (err) {}
   })
 })

@@ -74,6 +74,10 @@ export class UserEntity implements IUserEntity {
     return this
   }
 
+  public toString() {
+    return (this.id as ObjectID).toString()
+  }
+
   public data(...exclude: IUserIndexes[]) {
     return filterObjectFields({
       id: this.id?.toString(),

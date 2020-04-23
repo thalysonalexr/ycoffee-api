@@ -28,7 +28,6 @@ export class CoffeeRepository implements ICoffeeRepository<ICoffeeEntity, IValue
       preparation: coffee.preparation.toString(),
       timePrepare: coffee.timePrepare.toNumber(),
       portions: coffee.portions.toNumber(),
-      picture: coffee.picture.toString(),
       author: coffee.author.toString(),
     })
 
@@ -91,7 +90,6 @@ export class CoffeeRepository implements ICoffeeRepository<ICoffeeEntity, IValue
       coffee.preparation,
       coffee.timePrepare,
       coffee.portions,
-      coffee.picture,
       coffee.author.name,
       coffee.author.email,
       coffee.author.password,
@@ -99,6 +97,7 @@ export class CoffeeRepository implements ICoffeeRepository<ICoffeeEntity, IValue
       coffee.author.role,
       coffee.author.createdAt,
       coffee.author.updatedAt,
+      coffee.image,
       coffee.id,
       coffee.updatedAt,
       coffee.createdAt
