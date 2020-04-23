@@ -24,7 +24,7 @@ Produto mínimo viável para cadastro e gerenciamento de receitas de cafés.
     * preparo
     * tempo de preparo
     * porções
-    * foto
+    * imagem
     * autor (usuario)
 
   - [x] Cadastrar usuário
