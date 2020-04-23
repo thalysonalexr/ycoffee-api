@@ -9,8 +9,14 @@ export const mongoId = [
 
 export const contentJson = [
   header('Content-Type')
-    .equals('application/json')
+    .contains('application/json')
     .withMessage('Content-Type: application/json is required.')
+]
+
+export const formData = [
+  header('Content-Type')
+    .contains('multipart/form-data')
+    .withMessage('Content-Type: multipart/form-data is required.')
 ]
 
 export const authorization = [
@@ -66,7 +72,9 @@ export const coffee = [
     .exists()
     .withMessage('Ingredients is required.')
     .isArray()
-    .withMessage('The field must be array.'),
+    .withMessage('The field must be array.')
+    .custom((value) => !value.map((ingredient: string) => ingredient.length <= 45).includes(false))
+    .withMessage('Each ingredient must contain a maximum of 45 characters.'),
 
   body('preparation')
     .exists()
@@ -83,8 +91,4 @@ export const coffee = [
     .optional()
     .isInt()
     .withMessage('Set a quantity portions in number integer.'),
-
-  body('picture')
-    .exists()
-    .withMessage('Picture URL is required.'),
 ]
