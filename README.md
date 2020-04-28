@@ -1,5 +1,6 @@
 # ycoffee
 
+[![GitHub version](https://badge.fury.io/gh/thalysonalexr%2Fycoffee.svg)](https://badge.fury.io/gh/thalysonalexr%2Fycoffee)
 [![Software License](https://img.shields.io/apm/l/vim-mode.svg)](https://github.com/thalysonalexr/ycoffee/blob/master/LICENSE)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/thalysonalexr/ycoffee/issues)
 [![Open Source Love](https://badges.frapsoft.com/os/v2/open-source.svg?v=103)](https://github.com/thalysonalexr)
@@ -41,7 +42,6 @@ Produto mínimo viável para cadastro e gerenciamento de receitas de cafés.
 ## Não funcionalidades - RNF
 
   - [x] Persistir dados em banco não relacional (MongoDB)
-  - [] Ter uma aplicação mobile e web para apresentação (React Native e ReactJS)
 
 ## Metodologias
 
