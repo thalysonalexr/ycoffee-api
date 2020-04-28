@@ -1,29 +1,33 @@
-version: "3.3"
+version: "3.6"
+
+networks:
+  ycoffee-network:
+    driver: bridge
 
 services:
-  api:
+  ycoffee-api:
     build:
-      context: ./docker/node
+      context: ./backend
       dockerfile: Dockerfile
-    image: nodejs
-    container_name: ycoffe_api
+    container_name: ycoffee-api
     restart: always
-    command: npm run dev
+    command: yarn dev
     ports:
       - "3333:3000"
     volumes:
-      - ./backend:/usr/app
-      - ./backend/node_modules:/usr/app/node_modules
+      - ./backend:/home/node/api
     environment:
-      - MONGO_URL=mongo
+      - MONGO_URL=ycoffee-mongo
     depends_on:
-      - mongo
+      - ycoffee-mongo
+    networks:
+      - ycoffee-network
     links:
-      - mongo
+      - ycoffee-mongo
 
-  mongo:
+  ycoffee-mongo:
     image: bitnami/mongodb:latest
-    container_name: ycoffe_mongo
+    container_name: ycoffee-mongo
     restart: always
     env_file: ".env"
     environment:
@@ -31,6 +35,8 @@ services:
       - MONGODB_USERNAME=${MONGO_USER}
       - MONGODB_PASSWORD=${MONGO_PASS}
       - MONGODB_DATABASE=${MONGO_DB}
+    networks:
+      - ycoffee-network
     ports:
       - "27017:27017"
     volumes:

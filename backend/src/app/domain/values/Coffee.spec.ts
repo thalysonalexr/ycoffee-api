@@ -24,15 +24,14 @@ describe('Unit test to value objects Coffee', () => {
   })
 
   it('should be able create new description', () => {
-    const sentence = faker.lorem.words(5)
+    const sentence = faker.random.alphaNumeric(20)
     const description = Description.toDescription(sentence)
     expect(description.toString()).toBe(sentence)
   })
 
   it('should be not able create description with less sentence', () => {
-    const sentence = faker.random.alphaNumeric(5)
     try {
-      expect(Description.toDescription(sentence)).toThrow(Error)
+      expect(Description.toDescription('')).toThrow(Error)
     } catch (err) {}
   })
 
@@ -63,9 +62,8 @@ describe('Unit test to value objects Coffee', () => {
   })
 
   it('should be not able create preparation with less sentence', () => {
-    const sentence = faker.random.alphaNumeric(5)
     try {
-      expect(Preparation.toPreparation(sentence)).toThrow(Error)
+      expect(Preparation.toPreparation('')).toThrow(Error)
     } catch (err) {}
   })
 
@@ -105,7 +103,7 @@ describe('Unit test to value objects Coffee', () => {
     } catch (err) {}
   })
 
-  it('should be able create new picture', () => {
+  it('should be able create new image', () => {
     const image = {
       name: faker.random.alphaNumeric(16),
       key: faker.random.alphaNumeric(16),

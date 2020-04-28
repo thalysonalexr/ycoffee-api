@@ -1,6 +1,6 @@
 import { PaginateModel } from 'mongoose'
 
-import { generateObjectFilters } from '@app/utils'
+import { generateObjectFilters, transformFieldsInRegex } from '@domain/repository/utils'
 
 import { IValueObject } from '@core/values/IValueObject'
 import { IFilter, IPaginate } from '@core/repository/IPaginate'
@@ -47,16 +47,19 @@ export class CoffeeRepository implements ICoffeeRepository<ICoffeeEntity, IValue
 
   public async findAll(page: number, limit: number, ...filters: IFilter<IValueObject>[]): Promise<IPaginate<ICoffeeEntity>> {
     const merged = generateObjectFilters<IValueObject>(...filters)
-    const { docs, pages, total } = await this._instance.paginate(merged, { page, limit })
+  
+    const { docs, pages, total } = await this._instance.paginate(
+      transformFieldsInRegex(merged), { page, limit }
+    )
 
-    const cafes = await Promise.all(docs.map(
+    const coffees = await Promise.all(docs.map(
       async coffee => {
         return CoffeeRepository.fromNativeData(
           await coffee.populate('author').execPopulate()
         )
     }))
 
-    return { docs: cafes, pages, total }
+    return { docs: coffees, pages, total }
   }
 
   public async updateCoffee(id: ObjectID, c: ICoffeeEntity): Promise<ICoffeeEntity | null> {
@@ -95,6 +98,7 @@ export class CoffeeRepository implements ICoffeeRepository<ICoffeeEntity, IValue
       coffee.author.password,
       String(coffee.author._id),
       coffee.author.role,
+      coffee.author.avatar,
       coffee.author.createdAt,
       coffee.author.updatedAt,
       coffee.image,

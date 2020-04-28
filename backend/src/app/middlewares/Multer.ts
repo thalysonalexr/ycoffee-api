@@ -5,7 +5,7 @@ import multer from '@config/multer'
 
 import { IMiddleware } from '@core/middlewares/IMiddleware'
 
-class Multer implements IMiddleware {
+export class Multer implements IMiddleware {
   private static upload = multer.single('image')
 
   public async process(req: Request, res: Response, next: NextFunction) {

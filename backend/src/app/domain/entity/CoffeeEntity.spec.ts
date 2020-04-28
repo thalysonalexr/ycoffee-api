@@ -86,11 +86,7 @@ describe('Coffee Entity', () => {
       size: faker.random.number(5000)
     }
 
-    coffee.appendImage({
-      name: image.name,
-      key: image.key,
-      size: image.size,
-    })
+    coffee.appendImage(image)
 
     expect(coffee.image?.toObject()).toStrictEqual(
       expect.objectContaining({

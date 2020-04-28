@@ -1,7 +1,8 @@
 import { IValueObject } from '@core/values/IValueObject'
 
 import { ObjectID } from '@domain/values/Mongo'
-import { TypeCoffe, ImageType } from '@domain/values/Coffee'
+import { ImageType } from '@domain/values/utils'
+import { TypeCoffe, Preparation } from '@domain/values/Coffee'
 import { ICoffeeEntity, CoffeeEntity } from '@domain/entity/CoffeeEntity'
 import CoffeeRepository, { ICoffeeRepository } from '@domain/repository/CoffeeRepository'
 
@@ -58,14 +59,18 @@ export class CoffeeService {
     return this.getAllBy(page, { author: ObjectID.toObjectID(id) })
   }
 
+  public async getAllByPreparation(page: number, preparation: string) {
+    return this.getAllBy(page, { preparation: Preparation.toPreparation(preparation) })
+  }
+
   public async getAllBy(page: number, params: {} = {}) {
     const { docs, pages, total } = await this._repository.findAll(
       page, this.totalDocs, params
     )
 
-    const cafes = await Promise.all(docs.map(coffee => coffee.data()))
+    const coffees = await Promise.all(docs.map(coffee => coffee.data()))
 
-    return { cafes, pages, total }
+    return { coffees, pages, total }
   }
 
   public async updateByAuthor(id: string, data: CoffeeData) {

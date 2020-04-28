@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
-import fs from 'fs'
-import path from 'path'
+import { destroyImage } from '@config/multer'
 
 import CoffeeService from '@domain/services/CoffeeService'
 
@@ -41,10 +40,7 @@ export class CoffeeController {
     })
 
     if (!coffee) {
-      fs.unlink(path.resolve(
-        __dirname, '..', '..', '..', '..', 'tmp', process.env.UPLOAD_PATH, key
-      ), () => {})
-
+      await destroyImage(key)
       return res.status(404).json({ error: 'Coffee not found.' })
     }
 
@@ -66,22 +62,27 @@ export class CoffeeController {
     const { page = 1 } = req.query
     const { id } = req.session
 
-    const cafes = await CoffeeService.getAllByAuthor((page as number), id)
+    const coffees = await CoffeeService.getAllByAuthor((page as number), id)
 
-    return res.status(200).json(cafes)
+    return res.status(200).json(coffees)
   }
 
   public async index(req: Request, res: Response) {
-    const { page = 1, type } = req.query
+    const { page = 1, type, preparation } = req.query
 
-    if (!type)
+    if (!type && !preparation)
       return res.status(200).json(
         await CoffeeService.getAllBy((page as number))
       )
 
-    return res.status(200).json(
-      await CoffeeService.getAllByType((page as number), (type as string))
-    )
+    if (preparation)
+      return res.status(200).json(
+        await CoffeeService.getAllByPreparation((page as number), preparation as string)
+      )
+    else
+      return res.status(200).json(
+        await CoffeeService.getAllByType((page as number), (type as string))
+      )
   }
 
   public async update(req: Request, res: Response) {
@@ -107,7 +108,7 @@ export class CoffeeController {
     })
 
     if (!coffee)
-      return res.status(404).json({ error: 'Coffee not updated.' })
+      return res.status(404).json({ error: 'Coffee not found.' })
 
     return res.status(200).json({ coffee: coffee.data() })
   }
@@ -117,7 +118,7 @@ export class CoffeeController {
     const { id: author } = req.session
 
     if (null === await CoffeeService.destroyByAuthor(id, author))
-      return res.status(404).json({ error: 'Coffee not removed.' })
+      return res.status(404).json({ error: 'Coffee not found.' })
 
     return res.status(204).end()
   }

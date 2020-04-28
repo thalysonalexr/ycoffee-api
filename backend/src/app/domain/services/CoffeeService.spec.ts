@@ -27,7 +27,7 @@ describe('Service Coffee', () => {
     const { id } = await factory.create<UserModel>('User')
 
     const coffee = await CoffeeService.create({
-      type: faker.name.title(),
+      type: faker.random.alphaNumeric(20),
       description: faker.lorem.words(5),
       ingredients: [faker.name.title(), faker.name.title()],
       preparation: faker.lorem.paragraphs(),
@@ -51,7 +51,7 @@ describe('Service Coffee', () => {
     expect(coffee).toBeInstanceOf(CoffeeEntity)
   })
 
-  it('should be able get all cafes by type', async () => {
+  it('should be able get all coffees by type', async () => {
     const coffeeType = 'Americano'
 
     const user = await factory.create<UserModel>('User')
@@ -69,11 +69,11 @@ describe('Service Coffee', () => {
       author: user.id
     })
 
-    const cafes = await CoffeeService.getAllByType(1, coffeeType)
+    const coffees = await CoffeeService.getAllByType(1, coffeeType)
 
-    expect(cafes).toStrictEqual(
+    expect(coffees).toStrictEqual(
       expect.objectContaining({
-        cafes: expect.arrayContaining([
+        coffees: expect.arrayContaining([
           expect.any(Object)
         ]),
         pages: expect.any(Number),
@@ -82,7 +82,7 @@ describe('Service Coffee', () => {
     )
   })
 
-  it('should be able get all cafes by author', async () => {
+  it('should be able get all coffees by author', async () => {
     const user1 = await factory.create<UserModel>('User', { email: 'hello@email.com' })
     const user2 = await factory.create<UserModel>('User', { email: 'world@email.com' })
 
@@ -98,11 +98,44 @@ describe('Service Coffee', () => {
       author: user2.id
     })
 
-    const cafes = await CoffeeService.getAllByAuthor(1, user1.id)
+    const coffees = await CoffeeService.getAllByAuthor(1, user1.id)
 
-    expect(cafes).toStrictEqual(
+    expect(coffees).toStrictEqual(
       expect.objectContaining({
-        cafes: expect.arrayContaining([
+        coffees: expect.arrayContaining([
+          expect.any(Object),
+          expect.any(Object),
+        ]),
+        pages: expect.any(Number),
+        total: expect.any(Number),
+      })
+    )
+  })
+
+  it('should be able get all coffees by preparation', async () => {
+    const user1 = await factory.create<UserModel>('User', { email: 'hello@email.com' })
+    const user2 = await factory.create<UserModel>('User', { email: 'world@email.com' })
+
+    const sentence = 'hello'
+
+    await factory.create<CoffeeModel>('Coffee', {
+      author: user1.id,
+      preparation: sentence
+    })
+
+    await factory.create<CoffeeModel>('Coffee', {
+      author: user1.id
+    })
+
+    await factory.create<CoffeeModel>('Coffee', {
+      author: user2.id
+    })
+
+    const coffees = await CoffeeService.getAllByPreparation(1, sentence)
+
+    expect(coffees).toStrictEqual(
+      expect.objectContaining({
+        coffees: expect.arrayContaining([
           expect.any(Object),
           expect.any(Object),
         ]),

@@ -3,6 +3,7 @@ import { generateTokenJwt } from '@app/utils'
 import { IValueObject } from '@core/values/IValueObject'
 
 import { ObjectID } from '@domain/values/Mongo'
+import { ImageType } from '@domain/values/utils'
 import { Email, RoleType } from '@domain/values/User'
 import { IUserEntity, UserEntity } from '@domain/entity/UserEntity'
 import UserRepository, { IUserRepository } from '@domain/repository/UserRepository'
@@ -25,6 +26,18 @@ export class UserService {
       : await this._repository.storeUser(
           UserEntity.createAdmin(user.name, user.email, user.password)
         )
+  }
+
+  public async appendAvatar(id: string, avatar: ImageType) {
+    const user = await this._repository.findById(id)
+
+    if (!user)
+      return null
+
+    return await this._repository.updateUser(
+      ObjectID.toObjectID(id),
+      user.appendAvatar(avatar)
+    )
   }
 
   public async getByEmail(email: string) {

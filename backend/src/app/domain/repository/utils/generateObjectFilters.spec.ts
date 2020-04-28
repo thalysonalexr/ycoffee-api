@@ -1,6 +1,6 @@
 import faker from 'faker'
 
-import { generateObjectFilters } from '@app/utils'
+import { generateObjectFilters } from '@domain/repository/utils'
 import { IValueObject } from '@core/values/IValueObject'
 
 import { Name, Email } from '@domain/values/User'

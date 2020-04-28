@@ -1,5 +1,5 @@
 import { param, header, body } from 'express-validator'
-import { isValidObjectId } from 'mongoose'
+import { isValidObjectId } from '@domain/repository/utils'
 
 export const mongoId = [
   param('id')
@@ -65,7 +65,7 @@ export const coffee = [
   body('description')
     .exists()
     .withMessage('Description is required.')
-    .isLength({ min: 20, max: 255 })
+    .isLength({ max: 255 })
     .withMessage('Exceeded size for description field.'),
 
   body('ingredients')
@@ -78,9 +78,7 @@ export const coffee = [
 
   body('preparation')
     .exists()
-    .withMessage('Preparation is required.')
-    .isLength({ min: 45})
-    .withMessage('Write about like do this coffee.'),
+    .withMessage('Preparation is required.'),
 
   body('timePrepare')
     .optional()

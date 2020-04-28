@@ -63,4 +63,29 @@ describe('User Entity', () => {
     expect(user.role).toBeInstanceOf(Role)
     expect(user.role?.toString()).toBe('disabled')
   })
+
+  it('should be able append avatar in user', () => {
+    const user = new UserEntity(
+      new Name(faker.name.findName()),
+      new Email(faker.internet.email()),
+      new Password(faker.internet.password(6)),
+      new Role('user'),
+    )
+
+    const image = {
+      name: faker.random.alphaNumeric(16),
+      key: faker.random.alphaNumeric(16),
+      size: faker.random.number(5000)
+    }
+
+    user.appendAvatar(image)
+
+    expect(user.avatar?.toObject()).toStrictEqual(
+      expect.objectContaining({
+        name: image.name,
+        key: image.key,
+        size: image.size
+      })
+    )
+  })
 })

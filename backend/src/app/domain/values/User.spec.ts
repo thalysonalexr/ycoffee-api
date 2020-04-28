@@ -1,6 +1,6 @@
 import faker from 'faker'
 
-import { Name, Email, Password, Role, UserValueException } from '@domain/values/User'
+import { Name, Email, Password, Role, UserValueException, Avatar } from '@domain/values/User'
 
 describe('Unit test to value objects User', () => {
   it('should be able create new valid name', () => {
@@ -43,5 +43,21 @@ describe('Unit test to value objects User', () => {
 
   it('should be able create new role', () => {
     expect(new Role('disabled').toString()).toBe('disabled')
+  })
+
+  it('should be able create new avatar', () => {
+    const avatar = {
+      name: faker.random.alphaNumeric(16),
+      key: faker.random.alphaNumeric(16),
+      size: faker.random.number(5000)
+    }
+
+    expect(Avatar.toAvatar(avatar).toObject()).toStrictEqual(
+      expect.objectContaining({
+        name: avatar.name,
+        key: avatar.key,
+        size: avatar.size
+      })
+    )
   })
 })

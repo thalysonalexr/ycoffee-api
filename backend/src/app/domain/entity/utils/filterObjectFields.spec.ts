@@ -1,6 +1,6 @@
 import faker from 'faker'
 
-import { filterObjectFields } from '@app/utils'
+import { filterObjectFields } from '@domain/entity/utils'
 
 test('should be able filter undefined and exclude properties in object', () => {
   const obj = {
