@@ -78,6 +78,7 @@ export class UserRepository implements IUserRepository<IUserEntity, IValueObject
       user.password,
       user._id,
       user.role,
+      user.avatar,
       user.createdAt,
       user.updatedAt,
     )

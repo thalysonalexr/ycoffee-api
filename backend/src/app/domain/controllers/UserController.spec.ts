@@ -1,5 +1,6 @@
 import faker from 'faker'
 import request from 'supertest'
+import path from 'path'
 
 import app from '../../../app'
 
@@ -9,6 +10,8 @@ import MongoMock from '@utils/test/MongoMock'
 
 import { Password } from '@domain/values/User'
 import User, { UserModel } from '@domain/schemas/User'
+
+const dirExamples = path.resolve(__dirname, '..', '..', '..', '..', 'tmp', 'tests', 'examples')
 
 describe('Users actions', () => {
   beforeAll(async () => {
@@ -188,5 +191,64 @@ describe('Users actions', () => {
       .set('Authorization', `Bearer ${token}`)
 
     expect(response.status).toBe(404)
+  })
+
+  it('should be able append avatar in user', async () => {
+    const user = await factory.create<UserModel>('User')
+    const token = generateTokenJwt(process.env.SECRET, { id: user.id })
+
+    const response = await request(app)
+      .put(`/v1/users/avatar`)
+      .attach('image', path.resolve(dirExamples, 'example.jpg'))
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(response.status).toBe(200)
+  })
+
+  it('should be not able append avatar in user because not exists', async () => {
+    const user = await factory.create<UserModel>('User')
+    const token = generateTokenJwt(process.env.SECRET, { id: user.id })
+
+    await User.deleteMany({})
+
+    const response = await request(app)
+      .put(`/v1/users/avatar`)
+      .attach('image', path.resolve(dirExamples, 'example.jpg'))
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(response.status).toBe(404)
+  })
+
+  it('should be able destroy user with avatar', async () => {
+    const user = await factory.create<UserModel>('User')
+    const token = generateTokenJwt(process.env.SECRET, { id: user.id })
+
+    await request(app)
+      .put(`/v1/users/avatar`)
+      .attach('image', path.resolve(dirExamples, 'example.jpg'))
+      .set('Authorization', `Bearer ${token}`)
+
+    const response = await request(app)
+      .delete(`/v1/users`)
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(response.status).toBe(204)
+  })
+
+  it('should be able replace avatar of user', async () => {
+    const user = await factory.create<UserModel>('User')
+    const token = generateTokenJwt(process.env.SECRET, { id: user.id })
+
+    await request(app)
+      .put(`/v1/users/avatar`)
+      .attach('image', path.resolve(dirExamples, 'example.jpg'))
+      .set('Authorization', `Bearer ${token}`)
+
+    const response = await request(app)
+      .put(`/v1/users/avatar`)
+      .attach('image', path.resolve(dirExamples, 'example.jpg'))
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(response.status).toBe(200)
   })
 })

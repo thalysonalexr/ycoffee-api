@@ -87,7 +87,7 @@ describe('Session', () => {
     const token = generateTokenJwt(process.env.SECRET, { id })
 
     const response = await request(app)
-      .delete(`/v1/coffee/${coffee}`)
+      .delete(`/v1/coffees/${coffee}`)
       .set('Authorization', `Bearer ${token}`)
 
     expect(response.status).toBe(204)
@@ -99,7 +99,7 @@ describe('Session', () => {
       author: id
     })
 
-    const response = await request(app).delete(`/v1/coffee/${coffee}`)
+    const response = await request(app).delete(`/v1/coffees/${coffee}`)
 
     expect(response.status).toBe(401)
   })
@@ -111,7 +111,7 @@ describe('Session', () => {
     })
 
     const response = await request(app)
-      .delete(`/v1/coffee/${coffee}`)
+      .delete(`/v1/coffees/${coffee}`)
       .set('Authorization', 'djj123n1j322j198c87c8qwycqwcqw7qw6')
 
     expect(response.status).toBe(401)
@@ -124,7 +124,7 @@ describe('Session', () => {
     })
 
     const response = await request(app)
-      .delete(`/v1/coffee/${coffee}`)
+      .delete(`/v1/coffees/${coffee}`)
       .set('Authorization', 'bear dqwidnin1in32n3i1i12in312n3i12')
 
     expect(response.status).toBe(401)
@@ -137,7 +137,7 @@ describe('Session', () => {
     })
 
     const response = await request(app)
-      .delete(`/v1/coffee/${coffee}`)
+      .delete(`/v1/coffees/${coffee}`)
       .set('Authorization', 'Bearer 312312idn12idi12ndinid12id12i')
     
     expect(response.status).toBe(401)

@@ -1,6 +1,7 @@
 import { IEntity } from '@core/entity/IEntity'
 import { ObjectID } from '@domain/values/Mongo'
 import { IUserEntity, UserEntity } from '@domain/entity/UserEntity'
+import { ImageType } from '@domain/values/utils'
 import {
   TypeCoffe,
   Description,
@@ -8,11 +9,10 @@ import {
   Preparation,
   TimePrepare,
   Portions,
-  ImageType,
   Image,
 } from '@domain/values/Coffee';
 
-import { filterObjectFields } from '@app/utils'
+import { filterObjectFields } from '@domain/entity/utils'
 
 export interface ICoffee {
   type: TypeCoffe
@@ -86,6 +86,7 @@ export class CoffeeEntity implements ICoffeeEntity {
     authorPassword: string,
     authorId?: string,
     authorRole?: string,
+    authorAvatar?: object,
     authorCreatedAt?: Date,
     authorUpdatedAt?: Date,
     image?: object,
@@ -106,6 +107,7 @@ export class CoffeeEntity implements ICoffeeEntity {
         authorPassword,
         authorId,
         authorRole,
+        authorAvatar,
         authorCreatedAt,
         authorUpdatedAt,
       ),

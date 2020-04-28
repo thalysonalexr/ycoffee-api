@@ -1,10 +1,6 @@
 import { IValueObject } from '@core/values/IValueObject'
 
-export type ImageType = {
-  name: string,
-  key: string,
-  size: number,
-}
+import { ImageType } from '@domain/values/utils'
 
 export class CoffeeValueException extends Error {
   constructor(message: string) {
@@ -41,8 +37,8 @@ export class Description implements IValueObject {
   private _value: string
 
   public constructor(value: string) {
-    if (value.length < 20 || value.length > 255) {
-      throw CoffeeValueException.new(`The description "${value}" of coffee must be 20 to 255 characters`)
+    if (value.length < 1 || value.length > 255) {
+      throw CoffeeValueException.new(`The description "${value}" of coffee must be 1 to 255 characters`)
     }
 
     this._value = value
@@ -86,8 +82,8 @@ export class Preparation implements IValueObject {
   private _value: string
 
   public constructor(value: string) {
-    if (value.length < 45) {
-      throw CoffeeValueException.new(`The "${value}" must be length 45 or more`)
+    if (value.length < 1) {
+      throw CoffeeValueException.new(`The "${value}" must be length 1 or more`)
     }
 
     this._value = value

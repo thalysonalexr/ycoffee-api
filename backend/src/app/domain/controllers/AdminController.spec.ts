@@ -149,7 +149,7 @@ describe('Admin actions', () => {
     })
 
     const response = await request(app)
-      .delete(`/v1/coffee/${id}/destroy`)
+      .delete(`/v1/coffees/${id}/destroy`)
       .set('Authorization', `Bearer ${token}`)
 
     expect(response.status).toBe(204)
@@ -167,7 +167,7 @@ describe('Admin actions', () => {
     await Coffee.deleteMany({})
 
     const response = await request(app)
-      .delete(`/v1/coffee/${id}/destroy`)
+      .delete(`/v1/coffees/${id}/destroy`)
       .set('Authorization', `Bearer ${token}`)
 
     expect(response.status).toBe(404)

@@ -1,14 +1,16 @@
 import { IEntity } from '@core/entity/IEntity'
 import { ObjectID } from '@domain/values/Mongo'
-import { Name, Email, Password, Role, RoleType } from '@domain/values/User'
+import { Name, Email, Password, Role, Avatar, RoleType } from '@domain/values/User'
+import { ImageType } from '@domain/values/utils'
 
-import { filterObjectFields } from '@app/utils'
+import { filterObjectFields } from '@domain/entity/utils'
 
 export interface IUser {
   name: Name
   email: Email
   password: Password
   role?: Role
+  avatar?: Avatar
   id?: ObjectID
   createdAt?: Date
   updatedAt?: Date
@@ -18,6 +20,7 @@ type IUserIndexes = keyof IUser
 
 export interface IUserEntity extends IUser, IEntity<IUserIndexes> {
   toRole(role: RoleType): UserEntity
+  appendAvatar(avatar: ImageType): UserEntity
 }
 
 export class UserEntity implements IUserEntity {
@@ -26,6 +29,7 @@ export class UserEntity implements IUserEntity {
     public email: Email,
     public password: Password,
     public role?: Role,
+    public avatar?: Avatar,
     public id?: ObjectID,
     public createdAt?: Date,
     public updatedAt?: Date,
@@ -55,6 +59,7 @@ export class UserEntity implements IUserEntity {
     password: string,
     id?: string,
     role?: string,
+    avatar?: object,
     createdAt?: Date,
     updatedAt?: Date,
   ): IUserEntity {
@@ -63,6 +68,7 @@ export class UserEntity implements IUserEntity {
       Email.toEmail(email),
       Password.toPassword(password),
       Role.toRole((role as RoleType)),
+      Avatar.toAvatar((avatar as ImageType)),
       ObjectID.toObjectID((id as string)),
       createdAt,
       updatedAt,
@@ -71,6 +77,11 @@ export class UserEntity implements IUserEntity {
 
   public toRole(role: RoleType): UserEntity {
     this.role = Role.toRole(role)
+    return this
+  }
+
+  public appendAvatar(avatar: ImageType): UserEntity {
+    this.avatar = Avatar.toAvatar(avatar)
     return this
   }
 
@@ -85,6 +96,7 @@ export class UserEntity implements IUserEntity {
       email: this.email.toString(),
       password: this.password.toString(),
       role: this.role?.toString(),
+      avatar: this.avatar?.toObject(),
       createdAt: this.createdAt,
       updatedAt: this.updatedAt
     }, ...exclude)

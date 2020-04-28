@@ -22,6 +22,8 @@ import {
 
 const repository = new CoffeeRepository(Coffee)
 
+process.env.UPLOAD_PATH = 'tests'
+
 describe('Coffee Repository', () => {
   beforeAll(async () => {
     await MongoMock.connect()
@@ -92,7 +94,7 @@ describe('Coffee Repository', () => {
     )
   })
 
-  it('should be able find all cafes', async () => {
+  it('should be able find all coffees', async () => {
     const user = await factory.create<UserModel>('User')
 
     await factory.create<CoffeeModel>('Coffee', {
@@ -107,9 +109,9 @@ describe('Coffee Repository', () => {
       author: user.id
     })
 
-    const cafes = await repository.findAll(1, 5)
+    const coffees = await repository.findAll(1, 5)
 
-    expect(cafes.docs.length).toBe(3)
+    expect(coffees.docs.length).toBe(3)
   })
 
   it('should be able update coffee by id', async () => {

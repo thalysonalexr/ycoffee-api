@@ -51,7 +51,7 @@ describe('Coffee actions', () => {
     }
 
     const response = await request(app)
-      .post('/v1/coffee')
+      .post('/v1/coffees')
       .set('Authorization', `Bearer ${token}`)
       .send(coffee)
 
@@ -82,7 +82,7 @@ describe('Coffee actions', () => {
     })
 
     const response = await request(app)
-      .get(`/v1/coffee/${id}`)
+      .get(`/v1/coffees/${id}`)
 
     expect(response.status).toBe(200)
     expect(response.body).toStrictEqual(
@@ -113,7 +113,7 @@ describe('Coffee actions', () => {
     await Coffee.deleteMany({})
 
     const response = await request(app)
-      .get(`/v1/coffee/${id}`)
+      .get(`/v1/coffees/${id}`)
 
     expect(response.status).toBe(404)
   })
@@ -128,7 +128,7 @@ describe('Coffee actions', () => {
     await Coffee.deleteMany({})
 
     const response = await request(app)
-      .get(`/v1/coffee/${id}`)
+      .get(`/v1/coffees/${id}`)
 
     expect(response.status).toBe(404)
   })
@@ -142,13 +142,13 @@ describe('Coffee actions', () => {
     const token = generateTokenJwt(process.env.SECRET, { id: user.id })
 
     const response = await request(app)
-      .get(`/v1/coffee/me`)
+      .get(`/v1/coffees/me`)
       .set('Authorization', `Bearer ${token}`)
 
     expect(response.status).toBe(200)
     expect(response.body).toStrictEqual(
       expect.objectContaining({
-        cafes: expect.arrayContaining([
+        coffees: expect.arrayContaining([
           expect.any(Object),
           expect.any(Object),
         ]),
@@ -170,12 +170,39 @@ describe('Coffee actions', () => {
     })
 
     const response = await request(app)
-      .get(`/v1/coffee?type=${filter}`)
+      .get(`/v1/coffees?type=${filter}`)
 
     expect(response.status).toBe(200)
     expect(response.body).toStrictEqual(
       expect.objectContaining({
-        cafes: expect.arrayContaining([
+        coffees: expect.arrayContaining([
+          expect.any(Object),
+          expect.any(Object),
+        ]),
+        pages: expect.any(Number),
+        total: expect.any(Number),
+      })
+    )
+  })
+
+  it('should be able get all coffee filter preparation', async () => {
+    const user = await factory.create<UserModel>('User')
+
+    const filter = 'Expresso'
+
+    await factory.create<CoffeeModel>('Coffee', { author: user.id })
+    await factory.create<CoffeeModel>('Coffee', {
+      preparation: filter,
+      author: user.id
+    })
+
+    const response = await request(app)
+      .get(`/v1/coffees?preparation=${filter}`)
+
+    expect(response.status).toBe(200)
+    expect(response.body).toStrictEqual(
+      expect.objectContaining({
+        coffees: expect.arrayContaining([
           expect.any(Object),
           expect.any(Object),
         ]),
@@ -192,12 +219,12 @@ describe('Coffee actions', () => {
     await factory.create<CoffeeModel>('Coffee', { author: user.id })
 
     const response = await request(app)
-      .get('/v1/coffee')
+      .get('/v1/coffees')
 
     expect(response.status).toBe(200)
     expect(response.body).toStrictEqual(
       expect.objectContaining({
-        cafes: expect.arrayContaining([
+        coffees: expect.arrayContaining([
           expect.any(Object),
           expect.any(Object),
         ]),
@@ -223,7 +250,7 @@ describe('Coffee actions', () => {
     }
 
     const response = await request(app)
-      .put(`/v1/coffee/${id}`)
+      .put(`/v1/coffees/${id}`)
       .set('Authorization', `Bearer ${token}`)
       .send(coffee)
 
@@ -255,7 +282,7 @@ describe('Coffee actions', () => {
     await Coffee.deleteMany({})
 
     const response = await request(app)
-      .put(`/v1/coffee/${id}`)
+      .put(`/v1/coffees/${id}`)
       .set('Authorization', `Bearer ${token}`)
       .send({
         type: faker.name.title(),
@@ -276,7 +303,7 @@ describe('Coffee actions', () => {
     const token = generateTokenJwt(process.env.SECRET, { id: user.id })
 
     const response = await request(app)
-      .delete(`/v1/coffee/${id}`)
+      .delete(`/v1/coffees/${id}`)
       .set('Authorization', `Bearer ${token}`)
 
     expect(response.status).toBe(204)
@@ -291,7 +318,7 @@ describe('Coffee actions', () => {
     await Coffee.deleteMany({})
 
     const response = await request(app)
-      .delete(`/v1/coffee/${id}`)
+      .delete(`/v1/coffees/${id}`)
       .set('Authorization', `Bearer ${token}`)
 
     expect(response.status).toBe(404)
@@ -304,7 +331,7 @@ describe('Coffee actions', () => {
     const token = generateTokenJwt(process.env.SECRET, { id: user.id })
 
     const response = await request(app)
-      .put(`/v1/coffee/${id}/image`)
+      .put(`/v1/coffees/${id}/image`)
       .attach('image', path.resolve(dirExamples, 'example.pdf'))
       .set('Authorization', `Bearer ${token}`)
 
@@ -318,7 +345,7 @@ describe('Coffee actions', () => {
     const token = generateTokenJwt(process.env.SECRET, { id: user.id })
 
     const response = await request(app)
-      .put(`/v1/coffee/${id}/image`)
+      .put(`/v1/coffees/${id}/image`)
       .attach('image', path.resolve(dirExamples, 'full.jpg'))
       .set('Authorization', `Bearer ${token}`)
 
@@ -334,7 +361,7 @@ describe('Coffee actions', () => {
     await Coffee.deleteMany({})
 
     const response = await request(app)
-      .put(`/v1/coffee/${id}/image`)
+      .put(`/v1/coffees/${id}/image`)
       .attach('image', path.resolve(dirExamples, 'example.jpg'))
       .set('Authorization', `Bearer ${token}`)
 
@@ -348,7 +375,26 @@ describe('Coffee actions', () => {
     const token = generateTokenJwt(process.env.SECRET, { id: user.id })
 
     const response = await request(app)
-      .put(`/v1/coffee/${id}/image`)
+      .put(`/v1/coffees/${id}/image`)
+      .attach('image', path.resolve(dirExamples, 'example.jpg'))
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(response.status).toBe(200)
+  })
+
+  it('should be able replace image of coffee', async () => {
+    const user = await factory.create<UserModel>('User')
+
+    const { id } = await factory.create<CoffeeModel>('Coffee', { author: user.id })
+    const token = generateTokenJwt(process.env.SECRET, { id: user.id })
+
+    await request(app)
+      .put(`/v1/coffees/${id}/image`)
+      .attach('image', path.resolve(dirExamples, 'example.jpg'))
+      .set('Authorization', `Bearer ${token}`)
+
+    const response = await request(app)
+      .put(`/v1/coffees/${id}/image`)
       .attach('image', path.resolve(dirExamples, 'example.jpg'))
       .set('Authorization', `Bearer ${token}`)
 
@@ -362,12 +408,12 @@ describe('Coffee actions', () => {
     const token = generateTokenJwt(process.env.SECRET, { id: user.id })
 
     await request(app)
-      .put(`/v1/coffee/${id}/image`)
+      .put(`/v1/coffees/${id}/image`)
       .attach('image', path.resolve(dirExamples, 'example.jpg'))
       .set('Authorization', `Bearer ${token}`)
 
     const response = await request(app)
-      .delete(`/v1/coffee/${id}`)
+      .delete(`/v1/coffees/${id}`)
       .set('Authorization', `Bearer ${token}`)
 
     expect(response.status).toBe(204)

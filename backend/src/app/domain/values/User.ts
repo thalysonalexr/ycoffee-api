@@ -2,6 +2,8 @@ import bcrypt from 'bcryptjs'
 
 import { IValueObject } from '@core/values/IValueObject'
 
+import { ImageType } from '@domain/values/utils'
+
 export type RoleType = 'admin' | 'disabled' | 'user'
 
 export class UserValueException extends Error {
@@ -95,5 +97,21 @@ export class Role implements IValueObject {
 
   public static toRole(value: RoleType) {
     return new Role(value)
+  }
+}
+
+export class Avatar implements IValueObject {
+  private _value: ImageType
+
+  constructor(value: ImageType) {
+    this._value = value
+  }
+
+  public toObject() {
+    return this._value
+  }
+
+  public static toAvatar(value: ImageType) {
+    return new Avatar(value)
   }
 }

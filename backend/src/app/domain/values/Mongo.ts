@@ -1,4 +1,4 @@
-import { isValidObjectId } from 'mongoose'
+import { isValidObjectId } from '@domain/repository/utils'
 
 import { IValueObject } from '@core/values/IValueObject'
 

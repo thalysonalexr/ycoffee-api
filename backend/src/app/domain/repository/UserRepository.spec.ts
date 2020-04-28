@@ -12,6 +12,8 @@ import { Name, Email, Password, Role } from '@domain/values/User'
 
 const repository = new UserRepository(User)
 
+process.env.UPLOAD_PATH = 'tests'
+
 describe('User Repository', () => {
   beforeAll(async () => {
     await MongoMock.connect()
