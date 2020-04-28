@@ -1,44 +1,23 @@
 import mongoosePaginate from 'mongoose-paginate'
-import mongoose, { Document, Schema, Query } from 'mongoose'
-import path from 'path'
-import fs from 'fs'
+import mongoose, { Document, Schema } from 'mongoose'
 
 import { ICoffee } from '@core/schemas/ICoffee'
 
+import { destroyImage } from '@config/multer'
+
 export type CoffeeModel = Document & ICoffee
 
-async function destroyImage(schema: Query<any>) {
-  const { _id } = schema.getQuery()
-
-  const coffee = await schema.findOne({ _id })
-
-  if (!coffee)
-    return
-
-  const { image: { key } } = coffee
-
-  if (key !== undefined)
-    fs.unlink(
-      path.resolve(
-        __dirname, '..', '..', '..', '..', 'tmp', process.env.UPLOAD_PATH, key
-      ),
-      () => {}
-    )
-}
-
-const CoffeeSchema = new Schema<CoffeeModel>({
+const CoffeeSchema = new Schema({
   type: {
     type: String,
     required: true,
     trim: true,
-    minlength: 1,
     maxlength: 45,
   },
   description: {
     type: String,
     required: true,
     trim: true,
-    minlength: 20,
     maxlength: 255,
   },
   ingredients: [{
@@ -48,7 +27,6 @@ const CoffeeSchema = new Schema<CoffeeModel>({
   }],
   preparation: {
     type: String,
-    minlength: 45,
     required: true,
     trim: true,
   },
@@ -78,14 +56,30 @@ const CoffeeSchema = new Schema<CoffeeModel>({
   },
 }, { timestamps: true })
 
+CoffeeSchema.pre('findOneAndUpdate', async function(next) {
+  const { _id } = this.getQuery()
+  const coffee = await this.findOne({ _id })
+
+  if (!coffee) return next()
+
+  const update = this.getUpdate()
+
+  if (coffee.image.key && update.image && coffee.image.key !== update.image.key)
+    await destroyImage(coffee.image.key)
+
+  return next()
+})
+
+CoffeeSchema.pre('findOneAndRemove', async function(next) {
+  const { _id } = this.getQuery()
+  const coffee = await this.findOne({ _id })
+
+  if (coffee && coffee.image.key)
+    await destroyImage(coffee.image.key)
+
+  return next()
+})
+
 CoffeeSchema.plugin(mongoosePaginate)
-
-CoffeeSchema.pre('findOneAndUpdate', async function() {
-  await destroyImage(this)
-})
-
-CoffeeSchema.pre('findOneAndRemove', async function() {
-  await destroyImage(this)
-})
 
 export default mongoose.model<CoffeeModel>('Coffee', CoffeeSchema)
