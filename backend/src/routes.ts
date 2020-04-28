@@ -2,6 +2,7 @@ import { Router } from 'express'
 
 import Auth from '@app/middlewares/Auth'
 import Multer from '@app/middlewares/Multer'
+import Compress from '@app/middlewares/Compress'
 import Validator from '@app/middlewares/Validator'
 import Authorization from '@app/middlewares/Authorization'
 
@@ -67,6 +68,16 @@ routes.put(
   UserController.update
 )
 
+routes.put(
+  '/users/avatar',
+  Multer,
+  Compress,
+  [...authorization, ...formData],
+  Validator,
+  Auth,
+  UserController.storeAvatar
+)
+
 routes.delete(
   '/users',
   Auth,
@@ -102,7 +113,7 @@ routes.delete(
 )
 
 routes.delete(
-  '/coffee/:id/destroy',
+  '/coffees/:id/destroy',
   mongoId,
   Validator,
   Auth,
@@ -112,7 +123,7 @@ routes.delete(
 
 // coffee routes
 routes.post(
-  '/coffee',
+  '/coffees',
   [...authorization, ...contentJson, ...coffee],
   Validator,
   Auth,
@@ -120,8 +131,9 @@ routes.post(
 )
 
 routes.put(
-  '/coffee/:id/image',
+  '/coffees/:id/image',
   Multer,
+  Compress,
   [...authorization, ...formData, ...mongoId],
   Validator,
   Auth,
@@ -129,25 +141,25 @@ routes.put(
 )
 
 routes.get(
-  '/coffee/me',
+  '/coffees/me',
   Auth,
   CoffeeController.profile
 )
 
 routes.get(
-  '/coffee/:id',
+  '/coffees/:id',
   mongoId,
   Validator,
   CoffeeController.show
 )
 
 routes.get(
-  '/coffee',
+  '/coffees',
   CoffeeController.index
 )
 
 routes.put(
-  '/coffee/:id',
+  '/coffees/:id',
   [...authorization, ...contentJson, ...coffee],
   Validator,
   Auth,
@@ -155,7 +167,7 @@ routes.put(
 )
 
 routes.delete(
-  '/coffee/:id',
+  '/coffees/:id',
   mongoId,
   Validator,
   Auth,
