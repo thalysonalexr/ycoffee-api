@@ -8,7 +8,7 @@
 Repositório do projeto "Seu Café". API com Node.js e TypeScript, frontend com React e React Native.
 
 <p align="center">
-  <a href="https://github.com/thalysonrodrigues/ycoffee">
+  <a href="https://github.com/thalysonalexr/ycoffee">
     <img src="./docs/coffee-types.jpg" alt="logo" title="Seu Café">
   </a>
 </p>
