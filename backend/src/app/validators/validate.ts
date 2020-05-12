@@ -29,6 +29,7 @@ export const user = [
   body('name')
     .exists()
     .withMessage('Name is required.')
+    .isLength({ max: 255 })
     .trim(),
 
   body('email')
