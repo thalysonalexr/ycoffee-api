@@ -29,6 +29,8 @@ export const user = [
   body('name')
     .exists()
     .withMessage('Name is required.')
+    .notEmpty()
+    .withMessage('Name is not empty')
     .isLength({ max: 255 })
     .trim(),
 
@@ -59,6 +61,8 @@ export const coffee = [
   body('type')
     .exists()
     .withMessage('Type coffee is required.')
+    .notEmpty()
+    .withMessage('Type is not empty')
     .isLength({ min: 1, max: 45 })
     .withMessage('Exceeded size for type coffee field.')
     .trim(),
@@ -66,20 +70,26 @@ export const coffee = [
   body('description')
     .exists()
     .withMessage('Description is required.')
+    .notEmpty()
+    .withMessage('Description is not empty')
     .isLength({ max: 255 })
-    .withMessage('Exceeded size for description field.'),
+    .withMessage('Exceeded size for description field.')
+    .trim(),
 
   body('ingredients')
     .exists()
     .withMessage('Ingredients is required.')
     .isArray()
     .withMessage('The field must be array.')
-    .custom((value) => !value.map((ingredient: string) => ingredient.length <= 45).includes(false))
+    .custom((value) => value.every((ingredient: string) => ingredient.length <= 45))
     .withMessage('Each ingredient must contain a maximum of 45 characters.'),
 
   body('preparation')
     .exists()
-    .withMessage('Preparation is required.'),
+    .withMessage('Preparation is required.')
+    .notEmpty()
+    .withMessage('Description is not empty')
+    .trim(),
 
   body('timePrepare')
     .optional()
