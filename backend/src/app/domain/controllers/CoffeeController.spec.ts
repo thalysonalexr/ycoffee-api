@@ -158,6 +158,56 @@ describe('Coffee actions', () => {
     )
   })
 
+  it('should be able get all coffee by author to profile filtering by type', async () => {
+    const user = await factory.create<UserModel>('User')
+    const type = 'Teste'
+
+    await factory.create<CoffeeModel>('Coffee', { type, author: user.id })
+    await factory.create<CoffeeModel>('Coffee', { author: user.id })
+
+    const token = generateTokenJwt(process.env.SECRET, { id: user.id })
+
+    const response = await request(app)
+      .get(`/v1/coffees/me?type=${type}`)
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(response.status).toBe(200)
+    expect(response.body).toStrictEqual(
+      expect.objectContaining({
+        coffees: expect.arrayContaining([
+          expect.any(Object),
+        ]),
+        pages: expect.any(Number),
+        total: expect.any(Number),
+      })
+    )
+  })
+
+  it('should be able get all coffee by author to profile filtering by preparation', async () => {
+    const user = await factory.create<UserModel>('User')
+    const preparation = 'Teste'
+
+    await factory.create<CoffeeModel>('Coffee', { preparation, author: user.id })
+    await factory.create<CoffeeModel>('Coffee', { author: user.id })
+
+    const token = generateTokenJwt(process.env.SECRET, { id: user.id })
+
+    const response = await request(app)
+      .get(`/v1/coffees/me?preparation=${preparation}`)
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(response.status).toBe(200)
+    expect(response.body).toStrictEqual(
+      expect.objectContaining({
+        coffees: expect.arrayContaining([
+          expect.any(Object),
+        ]),
+        pages: expect.any(Number),
+        total: expect.any(Number),
+      })
+    )
+  })
+
   it('should be able get all coffee filter type', async () => {
     const user = await factory.create<UserModel>('User')
 

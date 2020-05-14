@@ -13,11 +13,12 @@ export function isValidObjectId(id: any) {
 export function generateObjectFilters<T extends object>(...filters: IFilter<T>[]) {
   const merged = {}
 
-  filters.forEach(filter => {
-    const key = Object.keys(filter)[0]
-    if (key)
+  if (filters.length) {
+    filters.forEach(filter => {
+      const key = Object.keys(filter)[0]
       Object.assign(merged, { [key]: filter[key].toString() })
-  })
+    })
+  }
 
   return merged
 }

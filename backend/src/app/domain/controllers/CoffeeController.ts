@@ -59,16 +59,20 @@ export class CoffeeController {
   }
 
   public async profile(req: Request, res: Response) {
-    const { page = 1, limit = 10 } = req.query
+    const { page = 1, limit = 10, type, preparation } = req.query
     const { id } = req.session
 
-    const coffees = await CoffeeService.getAllByAuthor(
-      +page,
-      +limit,
-      id
+    return res.status(200).json(
+      await CoffeeService.getAllByAuthor(
+        +page,
+        +limit,
+        id,
+        {
+          type: type as string,
+          preparation: preparation as string,
+        }
+      )
     )
-
-    return res.status(200).json(coffees)
   }
 
   public async index(req: Request, res: Response) {
