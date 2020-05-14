@@ -59,29 +59,44 @@ export class CoffeeController {
   }
 
   public async profile(req: Request, res: Response) {
-    const { page = 1 } = req.query
+    const { page = 1, limit = 10 } = req.query
     const { id } = req.session
 
-    const coffees = await CoffeeService.getAllByAuthor((page as number), id)
+    const coffees = await CoffeeService.getAllByAuthor(
+      +page,
+      +limit,
+      id
+    )
 
     return res.status(200).json(coffees)
   }
 
   public async index(req: Request, res: Response) {
-    const { page = 1, type, preparation } = req.query
+    const { page = 1, limit = 10, type, preparation } = req.query
 
     if (!type && !preparation)
       return res.status(200).json(
-        await CoffeeService.getAllBy((page as number))
+        await CoffeeService.getAllBy(
+          +page,
+          +limit
+        )
       )
 
     if (preparation)
       return res.status(200).json(
-        await CoffeeService.getAllByPreparation((page as number), preparation as string)
+        await CoffeeService.getAllByPreparation(
+          +page,
+          +limit,
+          preparation as string
+        )
       )
     else
       return res.status(200).json(
-        await CoffeeService.getAllByType((page as number), (type as string))
+        await CoffeeService.getAllByType(
+          +page,
+          +limit,
+          type as string
+        )
       )
   }
 
