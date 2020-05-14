@@ -69,7 +69,7 @@ describe('Service Coffee', () => {
       author: user.id
     })
 
-    const coffees = await CoffeeService.getAllByType(1, coffeeType)
+    const coffees = await CoffeeService.getAllByType(1, 10, coffeeType)
 
     expect(coffees).toStrictEqual(
       expect.objectContaining({
@@ -98,7 +98,7 @@ describe('Service Coffee', () => {
       author: user2.id
     })
 
-    const coffees = await CoffeeService.getAllByAuthor(1, user1.id)
+    const coffees = await CoffeeService.getAllByAuthor(1, 5, user1.id)
 
     expect(coffees).toStrictEqual(
       expect.objectContaining({
@@ -131,7 +131,7 @@ describe('Service Coffee', () => {
       author: user2.id
     })
 
-    const coffees = await CoffeeService.getAllByPreparation(1, sentence)
+    const coffees = await CoffeeService.getAllByPreparation(1, 10, sentence)
 
     expect(coffees).toStrictEqual(
       expect.objectContaining({

@@ -17,8 +17,6 @@ type CoffeeData = {
 }
 
 export class CoffeeService {
-  private readonly totalDocs = 20
-
   public constructor(private _repository: ICoffeeRepository<ICoffeeEntity, IValueObject>) {}
 
   public async create(coffee: CoffeeData) {
@@ -51,21 +49,21 @@ export class CoffeeService {
     return await this._repository.findById(ObjectID.toObjectID(id))
   }
 
-  public async getAllByType(page: number, type: string) {
-    return this.getAllBy(page, { type: TypeCoffe.toType(type) })
+  public async getAllByType(page: number, limit: number, type: string) {
+    return this.getAllBy(page, limit, { type: TypeCoffe.toType(type) })
   }
 
-  public async getAllByAuthor(page: number, id: string) {
-    return this.getAllBy(page, { author: ObjectID.toObjectID(id) })
+  public async getAllByAuthor(page: number, limit: number, id: string) {
+    return this.getAllBy(page, limit, { author: ObjectID.toObjectID(id) })
   }
 
-  public async getAllByPreparation(page: number, preparation: string) {
-    return this.getAllBy(page, { preparation: Preparation.toPreparation(preparation) })
+  public async getAllByPreparation(page: number, limit: number, preparation: string) {
+    return this.getAllBy(page, limit, { preparation: Preparation.toPreparation(preparation) })
   }
 
-  public async getAllBy(page: number, params: {} = {}) {
+  public async getAllBy(page: number, limit: number, params: {} = {}) {
     const { docs, pages, total } = await this._repository.findAll(
-      page, this.totalDocs, params
+      page, limit, params
     )
 
     const coffees = await Promise.all(docs.map(coffee => coffee.data()))
