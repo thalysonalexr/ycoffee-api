@@ -50,20 +50,45 @@ export class CoffeeService {
   }
 
   public async getAllByType(page: number, limit: number, type: string) {
-    return this.getAllBy(page, limit, { type: TypeCoffe.toType(type) })
+    return this.getAllBy(page, limit, [
+      { type: TypeCoffe.toType(type) }
+    ])
   }
 
-  public async getAllByAuthor(page: number, limit: number, id: string) {
-    return this.getAllBy(page, limit, { author: ObjectID.toObjectID(id) })
+  public async getAllByAuthor(
+    page: number, limit: number, id: string, params?: {
+      type?: string,
+      preparation?: string
+    }) {
+
+    if (params) {
+      if (params.type)
+        return this.getAllBy(page, limit, [
+          { author: ObjectID.toObjectID(id), },
+          { type: TypeCoffe.toType(params.type) },
+        ])
+
+      if (params.preparation)
+        return this.getAllBy(page, limit, [
+          { author: ObjectID.toObjectID(id) },
+          { preparation: TypeCoffe.toType(params.preparation) },
+        ])
+    }
+
+    return this.getAllBy(page, limit, [
+      { author: ObjectID.toObjectID(id), }
+    ])
   }
 
   public async getAllByPreparation(page: number, limit: number, preparation: string) {
-    return this.getAllBy(page, limit, { preparation: Preparation.toPreparation(preparation) })
+    return this.getAllBy(page, limit, [
+      { preparation: Preparation.toPreparation(preparation) }
+    ])
   }
 
-  public async getAllBy(page: number, limit: number, params: {} = {}) {
+  public async getAllBy(page: number, limit: number, params: {}[] = []) {
     const { docs, pages, total } = await this._repository.findAll(
-      page, limit, params
+      page, limit, ...params
     )
 
     const coffees = await Promise.all(docs.map(coffee => coffee.data()))

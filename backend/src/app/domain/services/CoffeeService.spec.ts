@@ -145,6 +145,72 @@ describe('Service Coffee', () => {
     )
   })
 
+  it('should be able get all coffees by author and type', async () => {
+    const coffeeType = 'Americano'
+
+    const user = await factory.create<UserModel>('User')
+
+    await factory.create<CoffeeModel>('Coffee', {
+      author: user.id
+    })
+
+    await factory.create<CoffeeModel>('Coffee', {
+      type: coffeeType,
+      author: user.id
+    })
+
+    await factory.create<CoffeeModel>('Coffee', {
+      author: user.id
+    })
+
+    const coffees = await CoffeeService.getAllByAuthor(1, 10, user.id, {
+      type: coffeeType,
+    })
+
+    expect(coffees).toStrictEqual(
+      expect.objectContaining({
+        coffees: expect.arrayContaining([
+          expect.any(Object)
+        ]),
+        pages: expect.any(Number),
+        total: expect.any(Number),
+      })
+    )
+  })
+
+  it('should be able get all coffees by author and preparation', async () => {
+    const coffeePreparation = 'Teste'
+
+    const user = await factory.create<UserModel>('User')
+
+    await factory.create<CoffeeModel>('Coffee', {
+      author: user.id
+    })
+
+    await factory.create<CoffeeModel>('Coffee', {
+      preparation: coffeePreparation,
+      author: user.id
+    })
+
+    await factory.create<CoffeeModel>('Coffee', {
+      author: user.id
+    })
+
+    const coffees = await CoffeeService.getAllByAuthor(1, 10, user.id, {
+      preparation: coffeePreparation,
+    })
+
+    expect(coffees).toStrictEqual(
+      expect.objectContaining({
+        coffees: expect.arrayContaining([
+          expect.any(Object)
+        ]),
+        pages: expect.any(Number),
+        total: expect.any(Number),
+      })
+    )
+  })
+
   it('should be able update coffee by id', async () => {
     const user = await factory.create<UserModel>('User')
 
