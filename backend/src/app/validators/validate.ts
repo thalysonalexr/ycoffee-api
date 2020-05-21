@@ -1,4 +1,4 @@
-import { param, header, body } from 'express-validator'
+import { param, header, body, query } from 'express-validator'
 import { isValidObjectId } from '@domain/repository/utils'
 
 export const mongoId = [
@@ -100,4 +100,12 @@ export const coffee = [
     .optional()
     .isInt()
     .withMessage('Set a quantity portions in number integer.'),
+]
+
+export const coffeeQuery = [
+  query('type')
+    .optional()
+    .isLength({ max: 45 })
+    .withMessage('Exceeded size for type coffee field.')
+    .trim(),
 ]
