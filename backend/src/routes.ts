@@ -17,8 +17,9 @@ import {
   session,
   mongoId,
   formData,
+  coffeeQuery,
   contentJson,
-  authorization
+  authorization,
 } from '@app/validators/validate'
 
 const routes = Router()
@@ -142,6 +143,8 @@ routes.put(
 
 routes.get(
   '/coffees/me',
+  coffeeQuery,
+  Validator,
   Auth,
   CoffeeController.profile
 )
@@ -155,6 +158,8 @@ routes.get(
 
 routes.get(
   '/coffees',
+  coffeeQuery,
+  Validator,
   CoffeeController.index
 )
 
