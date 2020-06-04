@@ -103,6 +103,36 @@ describe('Coffee actions', () => {
     )
   })
 
+  it('should be able show coffee by id without author', async () => {
+    const user = await factory.create<UserModel>('User')
+
+    const { id } = await factory.create<CoffeeModel>('Coffee', {
+      author: user.id
+    })
+
+    await User.deleteMany({})
+
+    const response = await request(app)
+      .get(`/v1/coffees/${id}`)
+
+    expect(response.status).toBe(200)
+    expect(response.body).toStrictEqual(
+      expect.objectContaining({
+        coffee: expect.objectContaining({
+          id: expect.any(String),
+          type: expect.any(String),
+          description: expect.any(String),
+          ingredients: expect.any(Array),
+          preparation: expect.any(String),
+          timePrepare: expect.any(Number),
+          portions: expect.any(Number),
+          updatedAt: expect.any(String),
+          createdAt: expect.any(String)
+        })
+      })
+    )
+  })
+
   it('should be not able show coffee by id because not exists', async () => {
     const user = await factory.create<UserModel>('User')
 

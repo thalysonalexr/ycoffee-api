@@ -10,7 +10,7 @@ import {
   TimePrepare,
   Portions,
   Image,
-} from '@domain/values/Coffee';
+} from '@domain/values/Coffee'
 
 import { filterObjectFields } from '@domain/entity/utils'
 
@@ -21,11 +21,11 @@ export interface ICoffee {
   preparation: Preparation
   timePrepare: TimePrepare
   portions: Portions
-  author: IUserEntity | ObjectID
   image?: Image
   id?: ObjectID
   updatedAt?: Date
   createdAt?: Date
+  author?: IUserEntity | ObjectID
 }
 
 type ICoffeeIndexes = keyof ICoffee
@@ -42,11 +42,11 @@ export class CoffeeEntity implements ICoffeeEntity {
     public preparation: Preparation,
     public timePrepare: TimePrepare,
     public portions: Portions,
-    public author: IUserEntity | ObjectID,
     public image?: Image,
     public id?: ObjectID,
     public updatedAt?: Date,
-    public createdAt?: Date
+    public createdAt?: Date,
+    public author?: IUserEntity | ObjectID,
   ) {}
 
   public static create(
@@ -65,8 +65,7 @@ export class CoffeeEntity implements ICoffeeEntity {
       Preparation.toPreparation(preparation),
       TimePrepare.toTimePrepare(timePrepare),
       Portions.toPortions(portions),
-      ObjectID.toObjectID(author)
-    )
+    ).appendAuthor(ObjectID.toObjectID(author))
   }
 
   public appendImage(image: ImageType) {
@@ -74,7 +73,38 @@ export class CoffeeEntity implements ICoffeeEntity {
     return this
   }
 
+  public appendAuthor(author: IUserEntity | ObjectID) {
+    this.author = author
+    return this
+  }
+
   public static fromNativeData(
+    type: string,
+    description: string,
+    ingredients: string[],
+    preparation: string,
+    timePrepare: number,
+    portions: number,
+    image?: object,
+    id?: string,
+    updatedAt?: Date,
+    createdAt?: Date
+  ): ICoffeeEntity {
+    return new CoffeeEntity(
+      TypeCoffe.toType(type),
+      Description.toDescription(description),
+      Ingredients.toIngredients(ingredients),
+      Preparation.toPreparation(preparation),
+      TimePrepare.toTimePrepare(timePrepare),
+      Portions.toPortions(portions),
+      Image.toImage((image as ImageType)),
+      ObjectID.toObjectID((id as string)),
+      updatedAt,
+      createdAt
+    )
+  }
+
+  public static fromNativeDataWithAuthor(
     type: string,
     description: string,
     ingredients: string[],
@@ -101,6 +131,10 @@ export class CoffeeEntity implements ICoffeeEntity {
       Preparation.toPreparation(preparation),
       TimePrepare.toTimePrepare(timePrepare),
       Portions.toPortions(portions),
+      Image.toImage((image as ImageType)),
+      ObjectID.toObjectID((id as string)),
+      updatedAt,
+      createdAt,
       UserEntity.fromNativeData(
         authorName,
         authorEmail,
@@ -111,10 +145,6 @@ export class CoffeeEntity implements ICoffeeEntity {
         authorCreatedAt,
         authorUpdatedAt,
       ),
-      Image.toImage((image as ImageType)),
-      ObjectID.toObjectID((id as string)),
-      updatedAt,
-      createdAt
     )
   }
 
@@ -128,7 +158,9 @@ export class CoffeeEntity implements ICoffeeEntity {
       timePrepare: this.timePrepare.toNumber(),
       portions: this.portions.toNumber(),
       image: this.image?.toObject(),
-      author: this.author instanceof UserEntity
+      updatedAt: this.updatedAt,
+      createdAt: this.updatedAt,
+      author: this.author && this.author instanceof UserEntity
         ? this.author.data(
             'email',
             'password',
@@ -136,9 +168,7 @@ export class CoffeeEntity implements ICoffeeEntity {
             'createdAt',
             'updatedAt'
           )
-        : this.author.toString(),
-      updatedAt: this.updatedAt,
-      createdAt: this.updatedAt
+        : this.author && this.author.toString(),
     }, ...exclude)
   }
 }
