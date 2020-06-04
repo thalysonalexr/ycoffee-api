@@ -29,8 +29,7 @@ describe('Coffee Entity', () => {
       new Preparation(faker.lorem.paragraphs()),
       new TimePrepare(faker.random.number(10)),
       new Portions(faker.random.number(10)),
-      user
-    )
+    ).appendAuthor(user)
 
     expect(coffee.type).toBeInstanceOf(TypeCoffe)
     expect(coffee.description).toBeInstanceOf(Description)
@@ -56,8 +55,8 @@ describe('Coffee Entity', () => {
       new Preparation(faker.lorem.paragraphs()),
       new TimePrepare(faker.random.number(10)),
       new Portions(faker.random.number(10)),
-      user
-    ).data('author')
+    ).appendAuthor(user)
+     .data('author')
 
     expect(coffee).toStrictEqual(expect.any(Object))
   })
@@ -77,8 +76,7 @@ describe('Coffee Entity', () => {
       new Preparation(faker.lorem.paragraphs()),
       new TimePrepare(faker.random.number(10)),
       new Portions(faker.random.number(10)),
-      user
-    )
+    ).appendAuthor(user)
 
     const image = {
       name: faker.random.alphaNumeric(16),

@@ -36,7 +36,7 @@ export class CoffeeService {
   public async appendImageByAuthor(id: string, author: string, image: ImageType) {
     const coffee = await this._repository.findById(id)
 
-    if (!coffee || coffee.author.toString() !== author)
+    if (!coffee || coffee.author && coffee.author.toString() !== author)
       return null
 
     return await this._repository.updateCoffee(
@@ -99,7 +99,7 @@ export class CoffeeService {
   public async updateByAuthor(id: string, data: CoffeeData) {
     const coffee = await this._repository.findById(id)
 
-    if (!coffee || coffee.author.toString() !== data.author)
+    if (!coffee || coffee.author && coffee.author.toString() !== data.author)
       return null
 
     return await this._repository.updateCoffee(
@@ -119,7 +119,7 @@ export class CoffeeService {
   public async destroyByAuthor(id: string, author: string) {
     const coffee = await this._repository.findById(id)
 
-    if (!coffee || coffee.author.toString() !== author)
+    if (!coffee || coffee.author && coffee.author.toString() !== author)
       return null
 
     return await this.destroy(id)

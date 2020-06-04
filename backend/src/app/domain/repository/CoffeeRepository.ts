@@ -28,7 +28,7 @@ export class CoffeeRepository implements ICoffeeRepository<ICoffeeEntity, IValue
       preparation: coffee.preparation.toString(),
       timePrepare: coffee.timePrepare.toNumber(),
       portions: coffee.portions.toNumber(),
-      author: coffee.author.toString(),
+      author: coffee.author && coffee.author.toString(),
     })
 
     return CoffeeRepository.fromNativeData(
@@ -86,7 +86,22 @@ export class CoffeeRepository implements ICoffeeRepository<ICoffeeEntity, IValue
   }
 
   private static fromNativeData(coffee: CoffeeModel) {
-    return CoffeeEntity.fromNativeData(
+    if (null === coffee.author) {
+      return CoffeeEntity.fromNativeData(
+        coffee.type,
+        coffee.description,
+        coffee.ingredients,
+        coffee.preparation,
+        coffee.timePrepare,
+        coffee.portions,
+        coffee.image,
+        coffee.id,
+        coffee.updatedAt,
+        coffee.createdAt,
+      )
+    }
+
+    return CoffeeEntity.fromNativeDataWithAuthor(
       coffee.type,
       coffee.description,
       coffee.ingredients,
