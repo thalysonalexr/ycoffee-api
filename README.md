@@ -7,8 +7,6 @@
 
 Repositório do projeto "Seu Café". API com Node.js e TypeScript, frontend com React e React Native.
 
-## :tada: MVP - Ideia
-
 Produto mínimo viável para cadastro e gerenciamento de receitas de cafés.
 
 ## :rocket: Tecnologias
